@@ -5,6 +5,7 @@
 #include <QValidator>
 #include <QtGui>
 #include <QPoint>
+#include <QLabel>
 
 class Block :public QWidget
 {

@@ -7,10 +7,16 @@ MainWindow::MainWindow(QWidget *parent):
 {
     ui->setupUi(this);
     frame = new QFrame(this);
+    QHBoxLayout *hLayout = new QHBoxLayout;
+    //QPushButton *button = new QPushButton;
     SetupBlocks();
     PaintLine();
-    this->setCentralWidget(frame);
-    this->setFixedSize(frame->width(),frame->height()+ui->statusBar->height()+ui->menuBar->height());
+    SetupMenu();
+    hLayout->addWidget(frame);
+    hLayout->addLayout(ui->Dial);
+    setLayout(hLayout);
+    //this->setCentralWidget(frame);
+    this->setFixedSize(frame->width()+155,frame->height());//+ui->statusBar->height()+ui->menuBar->height());
     this->setWindowTitle("Suduko Game!");
 }
 
@@ -54,6 +60,42 @@ void MainWindow::PaintLine()
             verticalLine[i]->move(0,0);
         }
     }
+}
+
+void MainWindow::SetupMenu()
+{
+    operaMenu=new QMenu(tr("操作(&O)"),this);
+    ui->menuBar->addMenu(operaMenu);
+
+    runAction=new QAction(tr("执行"),this);
+    runAction->setShortcut(tr("Ctrl+r"));
+    runAction->setStatusTip("计算数独解法");
+    //connect(runAction,SIGNAL(triggered()),this,SLOT(run()));
+    operaMenu->addAction(runAction);
+
+    saveAction = new QAction(tr("储存"), this);
+    operaMenu->addAction(saveAction);
+
+    clearAction=new QAction(tr("初始化"),this);
+    clearAction->setShortcut(tr("ctrl+d"));
+    clearAction->setStatusTip("初始化当前数独表");
+    //connect(clearAction,SIGNAL(triggered()),this,SLOT(clear()));
+    operaMenu->addAction(clearAction);
+
+    quitAction=new QAction(tr("退出"),this);
+    quitAction->setShortcut(tr("ctrl+q"));
+    quitAction->setStatusTip("退出程序");
+    //connect(quitAction,SIGNAL(triggered()),this,SLOT(close()));
+    operaMenu->addAction(quitAction);
+
+    helpMenu=new QMenu(tr("帮助(&H)"),this);
+    ui->menuBar->addMenu(helpMenu);
+    aboutAction=new QAction(tr("关于"),this);
+    aboutAction->setShortcut(tr("Ctrl+I"));
+    aboutAction->setStatusTip("关于数独计算器");
+    //connect(aboutAction,SIGNAL(triggered()),this,SLOT(about()));
+    helpMenu->addAction(aboutAction);
+
 }
 
 MainWindow::~MainWindow()
