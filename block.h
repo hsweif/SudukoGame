@@ -5,7 +5,7 @@
 #include <QValidator>
 #include <QtGui>
 #include <QPoint>
-#include <QLabel>
+#include <QTextBrowser>
 
 class Block :public QWidget
 {
@@ -20,12 +20,14 @@ public:
     void setPos(int x,int y);
     void setValue(int a);
     void setEna(bool ok);
+    void clearBlock();
 private slots:
     void dataChange(const QString & data);
 
 
 private:
-    QLineEdit *nubEidt;
+    //QLineEdit *nubEidt;
+    QTextBrowser *nubEidt;
     int da;
     QPoint p;
 };

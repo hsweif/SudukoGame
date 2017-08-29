@@ -3,25 +3,31 @@
 Block::Block(QWidget *parent)
     :QWidget(parent)
 {
-    nubEidt=new QLineEdit(this);
+    //nubEidt=new QLineEdit(this);
+    nubEidt=new QTextBrowser(this);
     nubEidt->setAlignment(Qt::AlignCenter);
     QFont font;
     font.setPixelSize(30);
-
     nubEidt->setFont(font);
-    nubEidt->setMinimumSize(50,50);
-    nubEidt->setMaximumSize(50,50);
+    nubEidt->setFixedSize(50,50);
+    /*
+    //限制住格子内只能输入1-9
     QRegExp regExp("[1-9]{1}");
     nubEidt->setValidator(new QRegExpValidator(regExp,this));
-
+    */
     connect(nubEidt,SIGNAL(textChanged(QString)),this,SLOT(dataChange(QString)));
-    nubEidt->setText("");
-    da=-1;
+    clearBlock();
 }
 
 int Block::data()
 {
     return da;
+}
+
+void Block::clearBlock()
+{
+    nubEidt->setText("");
+    da=-1;
 }
 
 void Block::setValue(int a)
