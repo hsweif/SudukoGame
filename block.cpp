@@ -3,21 +3,47 @@
 Block::Block(QWidget *parent)
     :QWidget(parent)
 {
-    //nubEidt=new QLineEdit(this);
-    nubEidt=new QTextBrowser(this);
-    nubEidt->setAlignment(Qt::AlignCenter);
+    blockNum=new QTextBrowser(this);
+    blockNum->setAlignment(Qt::AlignCenter);
     QFont font;
     font.setPixelSize(30);
-    nubEidt->setFont(font);
-    nubEidt->setFixedSize(50,50);
+    blockNum->setFont(font);
+    blockNum->setFixedSize(50,50);
+    blockNum->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    blockNum->installEventFilter(this);
+    this->changeColor(Qt::yellow);
     /*
     //限制住格子内只能输入1-9
     QRegExp regExp("[1-9]{1}");
-    nubEidt->setValidator(new QRegExpValidator(regExp,this));
+    blockNum->setValidator(new QRegExpValidator(regExp,this));
+    connect(blockNum,SIGNAL(textChanged(QString)),this,SLOT(dataChange(QString)));
     */
-    connect(nubEidt,SIGNAL(textChanged(QString)),this,SLOT(dataChange(QString)));
-    clearBlock();
 }
+
+bool Block::eventFilter(QObject *watched, QEvent *event)
+{
+    if(watched == blockNum)
+    {
+        if(event->type() == QEvent::MouseButtonPress)
+        {
+            QMouseEvent *mouseEvent = static_cast<QMouseEvent*>(event);
+            if(mouseEvent->button() == Qt::LeftButton)
+            {
+                this->changeColor(Qt::yellow);
+                return true;
+            }
+        }
+    }
+    return QWidget::eventFilter(watched, event);
+}
+
+/*void Block::mousePressEvent(QMouseEvent *event)
+{
+    if(event->button() == Qt::LeftButton)
+    {
+        this->changeColor(Qt::yellow);
+    }
+}*/
 
 int Block::data()
 {
@@ -26,7 +52,7 @@ int Block::data()
 
 void Block::clearBlock()
 {
-    nubEidt->setText("");
+    blockNum->setText("");
     da=-1;
 }
 
@@ -34,12 +60,12 @@ void Block::setValue(int a)
 {
     if(a<1)
     {
-        nubEidt->setText("");
+        blockNum->setText("");
         da=-1;
     }
     else
     {
-        nubEidt->setText(QString::number(a));
+        blockNum->setText(QString::number(a));
         da=a;
     }
 
@@ -47,7 +73,7 @@ void Block::setValue(int a)
 
 void Block::setEna(bool ok)
 {
-    nubEidt->setEnabled(ok);
+    blockNum->setEnabled(ok);
 }
 
 
@@ -62,8 +88,8 @@ void Block::dataChange(const QString &data)
 void Block::changeColor(const QColor &color)
 {
     QPalette pale;
-    pale.setColor(QPalette::Text,color);
-    nubEidt->setPalette(pale);
+    pale.setColor(QPalette::Base,color);
+    blockNum->setPalette(pale);
 }
 
 QPoint Block::getPos()

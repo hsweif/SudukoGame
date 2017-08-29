@@ -6,6 +6,8 @@
 #include <QtGui>
 #include <QPoint>
 #include <QTextBrowser>
+#include <QMouseEvent>
+#include <QEvent>
 
 class Block :public QWidget
 {
@@ -24,12 +26,13 @@ public:
 private slots:
     void dataChange(const QString & data);
 
-
 private:
-    //QLineEdit *nubEidt;
-    QTextBrowser *nubEidt;
+    //QLineEdit *blockNum;
+    QTextBrowser *blockNum;
     int da;
     QPoint p;
+    //void mousePressEvent(QMouseEvent*);
+    bool eventFilter(QObject *watched, QEvent *event);
 };
 
 #endif // BLOCK_H
