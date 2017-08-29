@@ -30,4 +30,5 @@ SOURCES += main.cpp\
 HEADERS  += mainwindow.h \
     customitem.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    block.ui
