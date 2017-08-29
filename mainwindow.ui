@@ -6,41 +6,19 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>516</width>
-    <height>422</height>
+    <width>605</width>
+    <height>446</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <widget class="QFrame" name="frame">
-    <property name="geometry">
-     <rect>
-      <x>12</x>
-      <y>12</y>
-      <width>341</width>
-      <height>341</height>
-     </rect>
-    </property>
-    <property name="sizePolicy">
-     <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-      <horstretch>0</horstretch>
-      <verstretch>0</verstretch>
-     </sizepolicy>
-    </property>
-    <property name="frameShape">
-     <enum>QFrame::StyledPanel</enum>
-    </property>
-    <property name="frameShadow">
-     <enum>QFrame::Raised</enum>
-    </property>
-   </widget>
    <widget class="QWidget" name="gridLayoutWidget">
     <property name="geometry">
      <rect>
-      <x>360</x>
-      <y>10</y>
+      <x>450</x>
+      <y>0</y>
       <width>151</width>
       <height>161</height>
      </rect>
@@ -171,7 +149,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>516</width>
+     <width>605</width>
      <height>22</height>
     </rect>
    </property>

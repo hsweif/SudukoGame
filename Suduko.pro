@@ -25,10 +25,11 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    customitem.cpp
+    block.cpp \
+    gridLine.cpp
 
 HEADERS  += mainwindow.h \
-    customitem.h
+    block.h \
+    gridLine.h
 
-FORMS    += mainwindow.ui \
-    block.ui
+FORMS    += mainwindow.ui

@@ -2,7 +2,16 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include "block.h"
 #include <QFrame>
+#include <QPushButton>
+#include <QPainter>
+#include <QLayout>
+#include <QGridLayout>
+#include <cstring>
+#include <QAction>
+#include <QMenu>
+#include "gridLine.h"
 
 namespace Ui
 {
@@ -17,8 +26,10 @@ public:
     ~MainWindow();
 private:
     Ui::MainWindow *ui;
-    void SetupBlocks();
     QFrame *frame;
+    Block *block[9][9];
+    void SetupBlocks();
+    void PaintLine();
 };
 
 #endif // MAINWINDOW_H
