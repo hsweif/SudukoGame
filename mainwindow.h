@@ -11,6 +11,8 @@
 #include <cstring>
 #include <QAction>
 #include <QMenu>
+#include <QPoint>
+#include <QObject>
 #include "gridLine.h"
 
 namespace Ui
@@ -27,10 +29,14 @@ public:
 private slots:
     void on_restartButton_clicked();
     //void Highlight(int,int);
+    void UpdateCurBlock(int,int);
 
+signals:
+    void BlockChosen(int,int);
 private:
     Ui::MainWindow *ui;
     QFrame *frame;
+    QPoint curBlock;
     QAction *clearAction;
     QAction *runAction;
     QAction *quitAction;

@@ -9,8 +9,6 @@
 #include <QMouseEvent>
 #include <QEvent>
 #include <QTextBrowser>
-#include <QToolButton>
-#include <QLabel>
 
 class Block :public QWidget
 {
