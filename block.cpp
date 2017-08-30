@@ -4,6 +4,9 @@ Block::Block(QWidget *parent)
     :QWidget(parent)
 {
     blockNum=new QTextBrowser(this);
+    //blockNum = new QToolButton(this);
+    //blockNum = new QLabel(this);
+    //blockNum->setFrameStyle(QFrame::Panel);
     blockNum->setAlignment(Qt::AlignCenter);
     QFont font;
     font.setPixelSize(30);
@@ -11,7 +14,8 @@ Block::Block(QWidget *parent)
     blockNum->setFixedSize(50,50);
     blockNum->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     blockNum->installEventFilter(this);
-    this->changeColor(Qt::yellow);
+    //this->changeColor(Qt::yellow);
+    this->setValue(3);
     /*
     //限制住格子内只能输入1-9
     QRegExp regExp("[1-9]{1}");
@@ -20,7 +24,7 @@ Block::Block(QWidget *parent)
     */
 }
 
-bool Block::eventFilter(QObject *watched, QEvent *event)
+/*bool Block::eventFilter(QObject *watched, QEvent *event)
 {
     if(watched == blockNum)
     {
@@ -35,15 +39,16 @@ bool Block::eventFilter(QObject *watched, QEvent *event)
         }
     }
     return QWidget::eventFilter(watched, event);
-}
+}*/
 
-/*void Block::mousePressEvent(QMouseEvent *event)
+void Block::mousePressEvent(QMouseEvent *event)
 {
-    if(event->button() == Qt::LeftButton)
+    if(event->buttons() == Qt::LeftButton)
     {
         this->changeColor(Qt::yellow);
+        this->setValue(1);
     }
-}*/
+}
 
 int Block::data()
 {

@@ -8,6 +8,9 @@
 #include <QTextBrowser>
 #include <QMouseEvent>
 #include <QEvent>
+#include <QTextBrowser>
+#include <QToolButton>
+#include <QLabel>
 
 class Block :public QWidget
 {
@@ -29,10 +32,12 @@ private slots:
 private:
     //QLineEdit *blockNum;
     QTextBrowser *blockNum;
+    //QToolButton *blockNum;
+    //QLabel *blockNum;
     int da;
     QPoint p;
-    //void mousePressEvent(QMouseEvent*);
-    bool eventFilter(QObject *watched, QEvent *event);
+    void mousePressEvent(QMouseEvent*);
+    //bool eventFilter(QObject *watched, QEvent *event);
 };
 
 #endif // BLOCK_H
