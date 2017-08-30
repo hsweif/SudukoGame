@@ -33,3 +33,6 @@ HEADERS  += mainwindow.h \
     gridLine.h
 
 FORMS    += mainwindow.ui
+
+RESOURCES += \
+    icons.qrc

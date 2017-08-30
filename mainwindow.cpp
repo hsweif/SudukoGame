@@ -19,6 +19,22 @@ MainWindow::MainWindow(QWidget *parent):
     //this->setCentralWidget(frame);
     this->setFixedSize(frame->width()+155,frame->height());//+ui->statusBar->height()+ui->menuBar->height());
     this->setWindowTitle("Suduko Game!");
+    timer = new QTimer(this);
+    timer->setInterval(1000);
+    connect(timer, SIGNAL(timeout()), this, SLOT(UpdateTime()));
+    curMin = 0; curSec = 0;
+}
+
+void MainWindow::UpdateTime()
+{
+    curSec ++;
+    if(curSec >= 60)
+    {
+        curMin ++;
+        curSec -= 60;
+    }
+    ui->minute->setText(QString::number(curMin));
+    ui->second->setText(QString::number(curSec));
 }
 
 void MainWindow::SetupBlocks()
@@ -65,7 +81,32 @@ void MainWindow::KeyboardMapping()
 void MainWindow::KeyPressed(int num)
 {
     block[curBlock.x()][curBlock.y()]->setValue(num);
+    //CheckCurBlock();
 }
+
+/*void MainWindow::CheckCurBlock()
+{
+    if(block[curBlock.x()][curBlock.y()]->num() != -1)
+    {
+        for(int i = 0; i < 9; i++)
+        {
+            if(block[curBlock.x()][curBlock.y()]->num() == block[curBlock.x()][i]->num()
+                    && curBlock.y() != i)
+            {
+                block[curBlock.x()][curBlock.y()]->changeColor(Qt::red);
+                break;
+            }
+            if(block[curBlock.x()][curBlock.y()]->num() == block[i][curBlock.y()]->num()
+                    && curBlock.x() != i)
+            {
+                block[curBlock.x()][curBlock.y()]->changeColor(Qt::red);
+                break;
+            }
+            //九宫格的待填充
+        }
+    }
+
+}*/
 
 void MainWindow::UpdateCurBlock(int _x, int _y)
 {
@@ -151,4 +192,14 @@ void MainWindow::on_restartButton_clicked()
             block[i][j]->clearBlock();
         }
     }
+}
+
+void MainWindow::on_clearButton_clicked()
+{
+    block[curBlock.x()][curBlock.y()]->clearBlock();
+}
+
+void MainWindow::on_startButton_clicked()
+{
+    timer->start(1000);
 }

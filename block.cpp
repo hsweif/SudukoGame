@@ -53,20 +53,20 @@ void Block::Highlight(int _x, int _y)
     if(p.x() == _x && p.y() == _y) {
         this->changeColor(Qt::yellow);
     }
-    else {
+    else if(this->palette() != Qt::red){
         this->changeColor(Qt::white);
     }
 }
 
-int Block::data()
+int Block::num()const
 {
-    return da;
+    return number;
 }
 
 void Block::clearBlock()
 {
     blockNum->setText("");
-    //da=-1;
+    number = -1;
 }
 
 void Block::setValue(int a)
@@ -74,12 +74,12 @@ void Block::setValue(int a)
     if(a<1)
     {
         blockNum->setText("");
-        da=-1;
+        number =-1;
     }
     else
     {
         blockNum->setText(QString::number(a));
-        da=a;
+        number =a;
     }
 
 }
@@ -93,9 +93,9 @@ void Block::setEna(bool ok)
 void Block::dataChange(const QString &data)
 {
     if(data.isEmpty())
-        da=-1;
+        number=-1;
     else
-        da=data.toInt();
+        number=data.toInt();
 }
 
 void Block::changeColor(const QColor &color)

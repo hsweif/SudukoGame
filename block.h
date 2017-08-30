@@ -17,7 +17,7 @@ class Block :public QWidget
 public:
     Block(QWidget *parent=0);
     void changeColor(const QColor &color);
-    int data();
+    int num()const;
     QPoint getPos();
     void setPos(const QPoint &p);
     void setPos(int x,int y);
@@ -36,7 +36,7 @@ private:
     QTextBrowser *blockNum;
     //QToolButton *blockNum;
     //QLabel *blockNum;
-    int da;
+    int number;
     QPoint p;
     void mousePressEvent(QMouseEvent*);
     //bool eventFilter(QObject *watched, QEvent *event);

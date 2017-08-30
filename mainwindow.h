@@ -11,9 +11,11 @@
 #include <cstring>
 #include <QAction>
 #include <QMenu>
+#include <QString>
 #include <QPoint>
 #include <QObject>
 #include <QSignalMapper>
+#include <QTimer>
 #include "gridLine.h"
 
 namespace Ui
@@ -32,6 +34,10 @@ private slots:
     //void Highlight(int,int);
     void UpdateCurBlock(int,int);
     void KeyPressed(int);
+    void on_clearButton_clicked();
+    void UpdateTime();
+
+    void on_startButton_clicked();
 
 signals:
     void BlockChosen(int,int);
@@ -47,11 +53,14 @@ private:
     QAction *saveAction;
     QMenu *operaMenu;
     QMenu *helpMenu;
+    QTimer *timer;
+    int curSec, curMin;
     Block *block[9][9];
     void SetupBlocks();
     void PaintLine();
     void SetupMenu();
     void KeyboardMapping();
+    //void CheckCurBlock();
 };
 
 #endif // MAINWINDOW_H
