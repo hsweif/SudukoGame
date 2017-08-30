@@ -39,6 +39,10 @@ private slots:
 
     void on_startButton_clicked();
 
+    void on_Pause_clicked();
+
+    void on_Resume_clicked();
+
 signals:
     void BlockChosen(int,int);
 private:

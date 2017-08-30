@@ -12,13 +12,22 @@ MainWindow::MainWindow(QWidget *parent):
     SetupBlocks();
     PaintLine();
     SetupMenu();
+    /*
+     *	UI界面的初始化配置，混用UI Designer和代码控制
+     * 	包括一些排版以及选单的配置
+     */
     KeyboardMapping();
     hLayout->addWidget(frame);
     hLayout->addLayout(ui->Dial);
     setLayout(hLayout);
-    //this->setCentralWidget(frame);
-    this->setFixedSize(frame->width()+155,frame->height());//+ui->statusBar->height()+ui->menuBar->height());
+    this->setFixedSize(frame->width()+155,frame->height());
     this->setWindowTitle("Suduko Game!");
+    ui->levelBox->addItem("Hard");
+    ui->levelBox->addItem("Normal");
+    ui->levelBox->addItem("Easy");
+    /*
+     * 计时器的初始化设置
+     */
     timer = new QTimer(this);
     timer->setInterval(1000);
     connect(timer, SIGNAL(timeout()), this, SLOT(UpdateTime()));
@@ -27,14 +36,25 @@ MainWindow::MainWindow(QWidget *parent):
 
 void MainWindow::UpdateTime()
 {
+    QString tmpS, tmpM;
     curSec ++;
     if(curSec >= 60)
     {
         curMin ++;
         curSec -= 60;
     }
-    ui->minute->setText(QString::number(curMin));
-    ui->second->setText(QString::number(curSec));
+    if(curSec < 10)
+    {
+        tmpS.append(QString::number(0));
+    }
+    if(curMin < 10)
+    {
+        tmpM.append(QString::number(0));
+    }
+    tmpS.append(QString::number(curSec));
+    tmpM.append(QString::number(curMin));
+    ui->minute->setText(tmpM);
+    ui->second->setText(tmpS);
 }
 
 void MainWindow::SetupBlocks()
@@ -80,7 +100,7 @@ void MainWindow::KeyboardMapping()
 
 void MainWindow::KeyPressed(int num)
 {
-    block[curBlock.x()][curBlock.y()]->setValue(num);
+    block[curBlock.x()][curBlock.y()]->AddValue(num);
     //CheckCurBlock();
 }
 
@@ -113,6 +133,7 @@ void MainWindow::UpdateCurBlock(int _x, int _y)
     curBlock.setX(_x);
     curBlock.setY(_y);
     emit BlockChosen(_x, _y);
+    timer->start(1000);
 }
 
 void MainWindow::PaintLine()
@@ -192,6 +213,15 @@ void MainWindow::on_restartButton_clicked()
             block[i][j]->clearBlock();
         }
     }
+    QTimer *tmp = timer;
+    timer = new QTimer(this);
+    timer->setInterval(1000);
+    connect(timer, SIGNAL(timeout()), this, SLOT(UpdateTime()));
+    disconnect(tmp, SIGNAL(timeout()), this, SLOT(UpdateTime()));
+    delete tmp;
+    curSec =0; curMin = 0;
+    ui->minute->setText("00");
+    ui->second->setText("00");
 }
 
 void MainWindow::on_clearButton_clicked()
@@ -200,6 +230,16 @@ void MainWindow::on_clearButton_clicked()
 }
 
 void MainWindow::on_startButton_clicked()
+{
+    timer->start(1000);
+}
+
+void MainWindow::on_Pause_clicked()
+{
+    timer->stop();
+}
+
+void MainWindow::on_Resume_clicked()
 {
     timer->start(1000);
 }

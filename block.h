@@ -9,6 +9,7 @@
 #include <QMouseEvent>
 #include <QEvent>
 #include <QTextBrowser>
+#include <QDebug>
 
 class Block :public QWidget
 {
@@ -22,6 +23,7 @@ public:
     void setPos(const QPoint &p);
     void setPos(int x,int y);
     void setValue(int a);
+    void AddValue(int);
     void setEna(bool ok);
     void clearBlock();
 private slots:
@@ -32,14 +34,13 @@ signals:
     void Chosen(int, int);
 
 private:
-    //QLineEdit *blockNum;
     QTextBrowser *blockNum;
-    //QToolButton *blockNum;
-    //QLabel *blockNum;
+    QFont font;
+    QString content;
     int number;
     QPoint p;
     void mousePressEvent(QMouseEvent*);
-    //bool eventFilter(QObject *watched, QEvent *event);
+    //void mouseReleaseEvent(QMouseEvent*);
 };
 
 #endif // BLOCK_H

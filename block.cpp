@@ -4,41 +4,14 @@ Block::Block(QWidget *parent)
     :QWidget(parent)
 {
     blockNum=new QTextBrowser(this);
-    //blockNum = new QToolButton(this);
-    //blockNum = new QLabel(this);
-    //blockNum->setFrameStyle(QFrame::Panel);
     blockNum->setAlignment(Qt::AlignCenter);
-    QFont font;
     font.setPixelSize(30);
     blockNum->setFont(font);
     blockNum->setFixedSize(50,50);
     blockNum->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     blockNum->installEventFilter(this);
     blockNum->setContextMenuPolicy(Qt::NoContextMenu);
-    /*
-    //限制住格子内只能输入1-9
-    QRegExp regExp("[1-9]{1}");
-    blockNum->setValidator(new QRegExpValidator(regExp,this));
-    connect(blockNum,SIGNAL(textChanged(QString)),this,SLOT(dataChange(QString)));
-    */
 }
-
-/*bool Block::eventFilter(QObject *watched, QEvent *event)
-{
-    if(watched == blockNum)
-    {
-        if(event->type() == QEvent::MouseButtonPress)
-        {
-            QMouseEvent *mouseEvent = static_cast<QMouseEvent*>(event);
-            if(mouseEvent->button() == Qt::LeftButton)
-            {
-                this->changeColor(Qt::yellow);
-                return true;
-            }
-        }
-    }
-    return QWidget::eventFilter(watched, event);
-}*/
 
 //Mac 上用左键选取会有种迷之bug。。。
 void Block::mousePressEvent(QMouseEvent *event)
@@ -48,9 +21,17 @@ void Block::mousePressEvent(QMouseEvent *event)
     }
 }
 
+/*void Block::mouseReleaseEvent(QMouseEvent *event)
+{
+    if(event->buttons() == Qt::LeftButton) {
+        qDebug() << "Left";
+        emit Chosen(this->p.x(), this->p.y());
+    }
+}*/
+
 void Block::Highlight(int _x, int _y)
 {
-    if(p.x() == _x && p.y() == _y) {
+    if(p.x() == _x || p.y() == _y) {
         this->changeColor(Qt::yellow);
     }
     else if(this->palette() != Qt::red){
@@ -65,8 +46,22 @@ int Block::num()const
 
 void Block::clearBlock()
 {
+    content.clear();
     blockNum->setText("");
     number = -1;
+}
+
+void Block::AddValue(int _num)
+{
+    content.append(QString::number(_num));
+    if(content.size() > 2) {
+        font.setPixelSize(18);
+    }
+    else {
+        font.setPixelSize(30);
+    }
+    blockNum->setFont(font);
+    blockNum->setText(content);
 }
 
 void Block::setValue(int a)
