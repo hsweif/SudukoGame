@@ -14,9 +14,7 @@ Block::Block(QWidget *parent)
     blockNum->setFixedSize(50,50);
     blockNum->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     blockNum->installEventFilter(this);
-    //this->changeColor(Qt::yellow);
-    this->setValue(3);
-    //connect(this, SIGNAL(Chosen(int,int)), this, SLOT(Highlight(int,int)));
+    blockNum->setContextMenuPolicy(Qt::NoContextMenu);
     /*
     //限制住格子内只能输入1-9
     QRegExp regExp("[1-9]{1}");
@@ -45,25 +43,18 @@ Block::Block(QWidget *parent)
 //Mac 上用左键选取会有种迷之bug。。。
 void Block::mousePressEvent(QMouseEvent *event)
 {
-    if(event->buttons() == Qt::RightButton)
-    {
-        this->changeColor(Qt::yellow);
-        this->setValue(1);
+    if(event->buttons() == Qt::RightButton) {
         emit Chosen(this->p.x(), this->p.y());
     }
 }
 
 void Block::Highlight(int _x, int _y)
 {
-    if(p.x() == _x && p.y() == _y)
-    {
+    if(p.x() == _x && p.y() == _y) {
         this->changeColor(Qt::yellow);
-        this->setValue(1);
     }
-    else
-    {
+    else {
         this->changeColor(Qt::white);
-        this->setValue(3);
     }
 }
 
@@ -75,7 +66,7 @@ int Block::data()
 void Block::clearBlock()
 {
     blockNum->setText("");
-    da=-1;
+    //da=-1;
 }
 
 void Block::setValue(int a)

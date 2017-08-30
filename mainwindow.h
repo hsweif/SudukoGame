@@ -13,6 +13,7 @@
 #include <QMenu>
 #include <QPoint>
 #include <QObject>
+#include <QSignalMapper>
 #include "gridLine.h"
 
 namespace Ui
@@ -30,6 +31,7 @@ private slots:
     void on_restartButton_clicked();
     //void Highlight(int,int);
     void UpdateCurBlock(int,int);
+    void KeyPressed(int);
 
 signals:
     void BlockChosen(int,int);
@@ -37,6 +39,7 @@ private:
     Ui::MainWindow *ui;
     QFrame *frame;
     QPoint curBlock;
+    QSignalMapper *keyboardMapper;
     QAction *clearAction;
     QAction *runAction;
     QAction *quitAction;
@@ -48,6 +51,7 @@ private:
     void SetupBlocks();
     void PaintLine();
     void SetupMenu();
+    void KeyboardMapping();
 };
 
 #endif // MAINWINDOW_H

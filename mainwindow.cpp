@@ -12,6 +12,7 @@ MainWindow::MainWindow(QWidget *parent):
     SetupBlocks();
     PaintLine();
     SetupMenu();
+    KeyboardMapping();
     hLayout->addWidget(frame);
     hLayout->addLayout(ui->Dial);
     setLayout(hLayout);
@@ -30,12 +31,40 @@ void MainWindow::SetupBlocks()
             block[i][j]->setPos(i,j);
             block[i][j]->move(j*50, i*50);
             connect(block[i][j], SIGNAL(Chosen(int,int)), this, SLOT(UpdateCurBlock(int,int)));
-            //QObject::connect(block[i][j], SIGNAL(Chosen(int,int)), this, SIGNAL(BlockChosen(int,int)));
             connect(this, SIGNAL(BlockChosen(int,int)), block[i][j], SLOT(Highlight(int,int)));
         }
     }
     int width = 50*9 + 1;
     frame->setMinimumSize(width, width);
+}
+
+void MainWindow::KeyboardMapping()
+{
+    keyboardMapper = new QSignalMapper(this);
+    connect(ui->toolButton_1, SIGNAL(clicked(bool)), keyboardMapper, SLOT(map()));
+    keyboardMapper->setMapping(ui->toolButton_1, 1);
+    connect(ui->toolButton_2, SIGNAL(clicked(bool)), keyboardMapper, SLOT(map()));
+    keyboardMapper->setMapping(ui->toolButton_2, 2);
+    connect(ui->toolButton_3, SIGNAL(clicked(bool)), keyboardMapper, SLOT(map()));
+    keyboardMapper->setMapping(ui->toolButton_3, 3);
+    connect(ui->toolButton_4, SIGNAL(clicked(bool)), keyboardMapper, SLOT(map()));
+    keyboardMapper->setMapping(ui->toolButton_4, 4);
+    connect(ui->toolButton_5, SIGNAL(clicked(bool)), keyboardMapper, SLOT(map()));
+    keyboardMapper->setMapping(ui->toolButton_5, 5);
+    connect(ui->toolButton_6, SIGNAL(clicked(bool)), keyboardMapper, SLOT(map()));
+    keyboardMapper->setMapping(ui->toolButton_6, 6);
+    connect(ui->toolButton_7, SIGNAL(clicked(bool)), keyboardMapper, SLOT(map()));
+    keyboardMapper->setMapping(ui->toolButton_7, 7);
+    connect(ui->toolButton_8, SIGNAL(clicked(bool)), keyboardMapper, SLOT(map()));
+    keyboardMapper->setMapping(ui->toolButton_8, 8);
+    connect(ui->toolButton_9, SIGNAL(clicked(bool)), keyboardMapper, SLOT(map()));
+    keyboardMapper->setMapping(ui->toolButton_9, 9);
+    connect(keyboardMapper, SIGNAL(mapped(int)), this, SLOT(KeyPressed(int)));
+}
+
+void MainWindow::KeyPressed(int num)
+{
+    block[curBlock.x()][curBlock.y()]->setValue(num);
 }
 
 void MainWindow::UpdateCurBlock(int _x, int _y)

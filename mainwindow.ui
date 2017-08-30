@@ -25,16 +25,16 @@
     </property>
     <layout class="QGridLayout" name="Dial">
      <item row="5" column="0" colspan="3">
-      <widget class="QPushButton" name="pushButton">
+      <widget class="QPushButton" name="undoButton">
        <property name="text">
         <string>Undo</string>
        </property>
       </widget>
      </item>
      <item row="6" column="0" colspan="3">
-      <widget class="QPushButton" name="restartButton">
+      <widget class="QPushButton" name="clearnButton">
        <property name="text">
-        <string>Restart</string>
+        <string>Clear</string>
        </property>
       </widget>
      </item>
@@ -169,16 +169,16 @@
       </widget>
      </item>
      <item row="4" column="0" colspan="3">
-      <widget class="QPushButton" name="pushButton_2">
+      <widget class="QPushButton" name="startButton">
        <property name="text">
         <string>Start</string>
        </property>
       </widget>
      </item>
      <item row="7" column="0" colspan="3">
-      <widget class="QPushButton" name="pushButton_4">
+      <widget class="QPushButton" name="restartButton">
        <property name="text">
-        <string>PushButton</string>
+        <string>Restart</string>
        </property>
       </widget>
      </item>
