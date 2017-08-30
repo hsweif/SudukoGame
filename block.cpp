@@ -16,6 +16,7 @@ Block::Block(QWidget *parent)
     blockNum->installEventFilter(this);
     //this->changeColor(Qt::yellow);
     this->setValue(3);
+    //connect(this, SIGNAL(Chosen(int,int)), this, SLOT(Highlight(int,int)));
     /*
     //限制住格子内只能输入1-9
     QRegExp regExp("[1-9]{1}");
@@ -41,12 +42,28 @@ Block::Block(QWidget *parent)
     return QWidget::eventFilter(watched, event);
 }*/
 
+//Mac 上用左键选取会有种迷之bug。。。
 void Block::mousePressEvent(QMouseEvent *event)
 {
-    if(event->buttons() == Qt::LeftButton)
+    if(event->buttons() == Qt::RightButton)
     {
         this->changeColor(Qt::yellow);
         this->setValue(1);
+        emit Chosen(this->p.x(), this->p.y());
+    }
+}
+
+void Block::Highlight(int _x, int _y)
+{
+    if(p.x() == _x && p.y() == _y)
+    {
+        this->changeColor(Qt::yellow);
+        this->setValue(1);
+    }
+    else
+    {
+        this->changeColor(Qt::white);
+        this->setValue(3);
     }
 }
 

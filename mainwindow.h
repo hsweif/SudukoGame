@@ -26,6 +26,7 @@ public:
     ~MainWindow();
 private slots:
     void on_restartButton_clicked();
+    //void Highlight(int,int);
 
 private:
     Ui::MainWindow *ui;

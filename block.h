@@ -28,6 +28,10 @@ public:
     void clearBlock();
 private slots:
     void dataChange(const QString & data);
+    void Highlight(int, int);
+
+signals:
+    void Chosen(int, int);
 
 private:
     //QLineEdit *blockNum;
