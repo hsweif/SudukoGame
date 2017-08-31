@@ -105,8 +105,27 @@ void MainWindow::KeyboardMapping()
 
 void MainWindow::KeyPressed(int num)
 {
-    block[curBlock.x()][curBlock.y()]->AddValue(num);
+    int && _x = curBlock.x(), && _y = curBlock.y();
+    block[_x][_y]->AddValue(num);
+    //不知道为啥得用指针
+    Step *tmp = new Step;
+    tmp->SetInstruct("click");
+    tmp->SetPos(_x,_y);
+    undoArr.push(tmp);
     //CheckCurBlock();
+}
+
+//Todo...
+void MainWindow::Undo()
+{
+    Step *tmp = undoArr.pop();
+    int && _x = tmp->Pos().x(), && _y = tmp->Pos().y();
+    redoArr.push(tmp);
+    QString && qstr = tmp->Instruct();
+    if(qstr == "click")
+    {
+        block[_x][_y]->RemoveTail();
+    }
 }
 
 /*void MainWindow::CheckCurBlock()
@@ -137,8 +156,6 @@ void MainWindow::UpdateCurBlock(int _x, int _y)
 {
     curBlock.setX(_x);
     curBlock.setY(_y);
-    emit BlockChosen(_x, _y);
-    timer->start(1000);
     emit BlockChosen(_x, _y,block[_x][_y]->num(),HighlightType());
     timer->start(1000);
 }
@@ -273,8 +290,10 @@ void MainWindow::on_Resume_clicked()
     timer->start(1000);
 }
 
+
 void MainWindow::on_markButton_clicked()
 {
+    int && _x = curBlock.x(), && _y = curBlock.y();
     bool flag = block[curBlock.x()][curBlock.y()]->marked;
     block[curBlock.x()][curBlock.y()]->marked = !flag;
     int tmp = block[curBlock.x()][curBlock.y()]->num();
@@ -293,4 +312,9 @@ void MainWindow::on_checkNum_clicked(bool checked)
     numFlag = checked;
     int tmp = block[curBlock.x()][curBlock.y()]->num();
     emit BlockChosen(curBlock.x(), curBlock.y(), tmp, HighlightType());
+}
+
+void MainWindow::on_undoButton_clicked()
+{
+    Undo();
 }

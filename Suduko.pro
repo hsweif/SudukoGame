@@ -26,11 +26,13 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += main.cpp\
         mainwindow.cpp \
     block.cpp \
-    gridLine.cpp
+    gridLine.cpp \
+    step.cpp
 
 HEADERS  += mainwindow.h \
     block.h \
-    gridLine.h
+    gridLine.h \
+    step.h
 
 FORMS    += mainwindow.ui
 

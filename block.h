@@ -27,6 +27,7 @@ public:
     void AddValue(int);
     void setEna(bool ok);
     void clearBlock();
+    void RemoveTail();
 private slots:
     void dataChange(const QString & data);
     void Highlight(int, int, int, char);

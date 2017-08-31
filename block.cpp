@@ -24,6 +24,13 @@ void Block::mousePressEvent(QMouseEvent *event)
     }
 }
 
+void Block::RemoveTail()
+{
+    int tmpSz = content.size();
+    content.remove(tmpSz-1, 1);
+    blockNum->setText(content);
+}
+
 /*void Block::mouseReleaseEvent(QMouseEvent *event)
 {
     if(event->buttons() == Qt::LeftButton) {

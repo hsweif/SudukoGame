@@ -16,7 +16,9 @@
 #include <QObject>
 #include <QSignalMapper>
 #include <QTimer>
+#include <QStack>
 #include "gridLine.h"
+#include "step.h"
 
 namespace Ui
 {
@@ -47,9 +49,7 @@ private slots:
     void on_checkRC_clicked(bool checked);
     void on_checkNum_clicked(bool checked);
 
-    void on_Pause_clicked();
-
-    void on_Resume_clicked();
+    void on_undoButton_clicked();
 
 signals:
     void BlockChosen(int,int,int,char);
@@ -67,6 +67,7 @@ private:
     QMenu *operaMenu;
     QMenu *helpMenu;
     QTimer *timer;
+    QStack <Step*> undoArr, redoArr;
     int curSec, curMin;
     Block *block[9][9];
     bool rcFlag, numFlag;
@@ -74,6 +75,7 @@ private:
     void PaintLine();
     void SetupMenu();
     void KeyboardMapping();
+    void Undo();
     char HighlightType();
     //void CheckCurBlock();
 };

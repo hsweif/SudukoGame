@@ -19,8 +19,7 @@
      <rect>
       <x>450</x>
       <y>10</y>
-      <width>151</width>
-      <width>161</width>
+      <width>181</width>
       <height>411</height>
      </rect>
     </property>
@@ -197,25 +196,7 @@
        </property>
       </widget>
      </item>
-     <item row="3" column="0" colspan="3">
-      <layout class="QHBoxLayout" name="horizontalLayout_2">
-       <item>
-        <widget class="QPushButton" name="Resume">
-         <property name="text">
-          <string>Resume</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="Pause">
-         <property name="text">
-          <string>Pause</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </item>
-     <item row="5" column="2">
+     <item row="8" column="2">
       <widget class="QToolButton" name="toolButton_6">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -280,16 +261,7 @@
        </property>
       </widget>
      </item>
-     <item row="0" column="1">
-      <spacer name="verticalSpacer">
-       <property name="orientation">
-        <enum>Qt::Vertical</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>20</width>
-         <height>40</height>
-        </size>
+     <item row="12" column="2">
       <widget class="QPushButton" name="clearButton">
        <property name="text">
         <string>Clear</string>
@@ -324,14 +296,6 @@
        </property>
       </widget>
      </item>
-     <item row="7" column="2">
-      <widget class="QPushButton" name="startButton">
-       <property name="text">
-        <string>Start</string>
-       </property>
-      </widget>
-     </item>
-     <item row="7" column="0" colspan="2">
      <item row="5" column="0" colspan="2">
       <widget class="QComboBox" name="levelBox"/>
      </item>
