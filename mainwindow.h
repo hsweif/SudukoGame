@@ -37,14 +37,23 @@ private slots:
     void on_clearButton_clicked();
     void UpdateTime();
 
+    /*
+     *	Ui Designer生成的槽函数
+     */
     void on_startButton_clicked();
+    void on_Pause_clicked();
+    void on_Resume_clicked();
+    void on_markButton_clicked();
+    void on_checkRC_clicked(bool checked);
+    void on_checkNum_clicked(bool checked);
 
     void on_Pause_clicked();
 
     void on_Resume_clicked();
 
 signals:
-    void BlockChosen(int,int);
+    void BlockChosen(int,int,int,char);
+
 private:
     Ui::MainWindow *ui;
     QFrame *frame;
@@ -60,10 +69,12 @@ private:
     QTimer *timer;
     int curSec, curMin;
     Block *block[9][9];
+    bool rcFlag, numFlag;
     void SetupBlocks();
     void PaintLine();
     void SetupMenu();
     void KeyboardMapping();
+    char HighlightType();
     //void CheckCurBlock();
 };
 

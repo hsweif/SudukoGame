@@ -11,6 +11,9 @@ Block::Block(QWidget *parent)
     blockNum->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     blockNum->installEventFilter(this);
     blockNum->setContextMenuPolicy(Qt::NoContextMenu);
+    marked = false;
+    //this->setMouseTracking(true);
+    number = -1;
 }
 
 //Mac 上用左键选取会有种迷之bug。。。
@@ -29,12 +32,26 @@ void Block::mousePressEvent(QMouseEvent *event)
     }
 }*/
 
-void Block::Highlight(int _x, int _y)
+void Block::Highlight(int _x, int _y, int _num, char _type)
 {
-    if(p.x() == _x || p.y() == _y) {
+    if(marked) {
+        this->changeColor(Qt::green);
+    }
+    else if((_type == 'r' || _type == 'b')
+          && (p.x() == _x || p.y() == _y))
+    {
         this->changeColor(Qt::yellow);
     }
-    else if(this->palette() != Qt::red){
+    else if((_type == 'b' || _type == 'n')
+            && number == _num && number != -1)
+    {
+        this->changeColor(Qt::yellow);
+    }
+    else if(p.x() == _x && p.y() == _y)
+    {
+        this->changeColor(Qt::yellow);
+    }
+    else{
         this->changeColor(Qt::white);
     }
 }
@@ -53,6 +70,10 @@ void Block::clearBlock()
 
 void Block::AddValue(int _num)
 {
+    if(content.size() == 0)
+    {
+        number = _num;
+    }
     content.append(QString::number(_num));
     if(content.size() > 2) {
         font.setPixelSize(18);

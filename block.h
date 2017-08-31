@@ -16,6 +16,7 @@ class Block :public QWidget
     Q_OBJECT
 
 public:
+    bool marked;
     Block(QWidget *parent=0);
     void changeColor(const QColor &color);
     int num()const;
@@ -28,7 +29,7 @@ public:
     void clearBlock();
 private slots:
     void dataChange(const QString & data);
-    void Highlight(int, int);
+    void Highlight(int, int, int, char);
 
 signals:
     void Chosen(int, int);

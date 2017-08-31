@@ -20,11 +20,12 @@ MainWindow::MainWindow(QWidget *parent):
     hLayout->addWidget(frame);
     hLayout->addLayout(ui->Dial);
     setLayout(hLayout);
-    this->setFixedSize(frame->width()+155,frame->height());
+    this->setFixedSize(frame->width()+180,frame->height());
     this->setWindowTitle("Suduko Game!");
     ui->levelBox->addItem("Hard");
     ui->levelBox->addItem("Normal");
     ui->levelBox->addItem("Easy");
+    //ui->centralWidget->setMouseTracking(true);
     /*
      * 计时器的初始化设置
      */
@@ -32,6 +33,10 @@ MainWindow::MainWindow(QWidget *parent):
     timer->setInterval(1000);
     connect(timer, SIGNAL(timeout()), this, SLOT(UpdateTime()));
     curMin = 0; curSec = 0;
+    /*
+     * 其他数据成员的初始化区域
+     */
+    rcFlag = false; numFlag = false;
 }
 
 void MainWindow::UpdateTime()
@@ -67,7 +72,7 @@ void MainWindow::SetupBlocks()
             block[i][j]->setPos(i,j);
             block[i][j]->move(j*50, i*50);
             connect(block[i][j], SIGNAL(Chosen(int,int)), this, SLOT(UpdateCurBlock(int,int)));
-            connect(this, SIGNAL(BlockChosen(int,int)), block[i][j], SLOT(Highlight(int,int)));
+            connect(this, SIGNAL(BlockChosen(int,int,int,char)), block[i][j], SLOT(Highlight(int,int,int,char)));
         }
     }
     int width = 50*9 + 1;
@@ -134,6 +139,30 @@ void MainWindow::UpdateCurBlock(int _x, int _y)
     curBlock.setY(_y);
     emit BlockChosen(_x, _y);
     timer->start(1000);
+    emit BlockChosen(_x, _y,block[_x][_y]->num(),HighlightType());
+    timer->start(1000);
+}
+
+/**
+ * @brief MainWindow::HighlightType
+ * 负责判断当前时哪一种高亮形式（行列、数字等）
+ * 以一个字符传递信息：
+ * b(both) / r(row & column) / n(number) / x (none)
+ */
+char MainWindow::HighlightType()
+{
+    if(rcFlag && numFlag) {
+        return 'b';
+    }
+    else if(rcFlag) {
+        return 'r';
+    }
+    else if(numFlag) {
+        return 'n';
+    }
+    else {
+        return 'x';
+    }
 }
 
 void MainWindow::PaintLine()
@@ -242,4 +271,26 @@ void MainWindow::on_Pause_clicked()
 void MainWindow::on_Resume_clicked()
 {
     timer->start(1000);
+}
+
+void MainWindow::on_markButton_clicked()
+{
+    bool flag = block[curBlock.x()][curBlock.y()]->marked;
+    block[curBlock.x()][curBlock.y()]->marked = !flag;
+    int tmp = block[curBlock.x()][curBlock.y()]->num();
+    emit BlockChosen(curBlock.x(), curBlock.y(), tmp, HighlightType());
+}
+
+void MainWindow::on_checkRC_clicked(bool checked)
+{
+    rcFlag = checked;
+    int tmp = block[curBlock.x()][curBlock.y()]->num();
+    emit BlockChosen(curBlock.x(), curBlock.y(), tmp, HighlightType());
+}
+
+void MainWindow::on_checkNum_clicked(bool checked)
+{
+    numFlag = checked;
+    int tmp = block[curBlock.x()][curBlock.y()]->num();
+    emit BlockChosen(curBlock.x(), curBlock.y(), tmp, HighlightType());
 }
