@@ -32,24 +32,23 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 private slots:
-    void on_restartButton_clicked();
     //void Highlight(int,int);
     void UpdateCurBlock(int,int);
     void KeyPressed(int);
-    void on_clearButton_clicked();
     void UpdateTime();
-
     /*
      *	Ui Designer生成的槽函数
      */
     void on_startButton_clicked();
+    void on_restartButton_clicked();
     void on_Pause_clicked();
+    void on_clearButton_clicked();
     void on_Resume_clicked();
     void on_markButton_clicked();
     void on_checkRC_clicked(bool checked);
     void on_checkNum_clicked(bool checked);
-
     void on_undoButton_clicked();
+    void on_redoButton_clicked();
 
 signals:
     void BlockChosen(int,int,int,char);
@@ -76,7 +75,9 @@ private:
     void SetupMenu();
     void KeyboardMapping();
     void Undo();
+    void Redo();
     char HighlightType();
+    void PushStep(int&,int&,int,QString);
     //void CheckCurBlock();
 };
 

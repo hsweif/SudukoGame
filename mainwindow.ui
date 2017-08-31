@@ -19,7 +19,7 @@
      <rect>
       <x>450</x>
       <y>10</y>
-      <width>181</width>
+      <width>171</width>
       <height>411</height>
      </rect>
     </property>
@@ -30,19 +30,6 @@
         <string>相同数字</string>
        </property>
       </widget>
-     </item>
-     <item row="12" column="1">
-      <spacer name="horizontalSpacer_2">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
      </item>
      <item row="12" column="0">
       <widget class="QPushButton" name="markButton">

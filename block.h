@@ -28,6 +28,8 @@ public:
     void setEna(bool ok);
     void clearBlock();
     void RemoveTail();
+    void SetContent(QString);
+    QString Content()const;
 private slots:
     void dataChange(const QString & data);
     void Highlight(int, int, int, char);
@@ -38,9 +40,9 @@ signals:
 private:
     QTextBrowser *blockNum;
     QFont font;
-    QString content;
     int number;
     QPoint p;
+    QString content;
     void mousePressEvent(QMouseEvent*);
     //void mouseReleaseEvent(QMouseEvent*);
 };

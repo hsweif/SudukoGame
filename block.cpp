@@ -24,10 +24,27 @@ void Block::mousePressEvent(QMouseEvent *event)
     }
 }
 
+QString Block::Content()const
+{
+    return content;
+}
 void Block::RemoveTail()
 {
     int tmpSz = content.size();
     content.remove(tmpSz-1, 1);
+    if(content.size() > 2) {
+        font.setPixelSize(18);
+    }
+    else {
+        font.setPixelSize(30);
+    }
+    blockNum->setFont(font);
+    blockNum->setText(content);
+}
+
+void Block::SetContent(QString qstr)
+{
+    content = qstr;
     blockNum->setText(content);
 }
 

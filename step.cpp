@@ -21,7 +21,17 @@ QString Step::Instruct()const
     return instruct;
 }
 
+void Step::SetValue(int num)
+{
+    value = num;
+}
+
 QPoint Step::Pos() const
 {
     return pos;
+}
+
+int Step::Value()const
+{
+    return value;
 }

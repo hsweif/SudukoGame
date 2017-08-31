@@ -37,6 +37,8 @@ MainWindow::MainWindow(QWidget *parent):
      * 其他数据成员的初始化区域
      */
     rcFlag = false; numFlag = false;
+    curBlock.setX(-1);
+    curBlock.setY(-1);
 }
 
 void MainWindow::UpdateTime()
@@ -106,12 +108,10 @@ void MainWindow::KeyboardMapping()
 void MainWindow::KeyPressed(int num)
 {
     int && _x = curBlock.x(), && _y = curBlock.y();
-    block[_x][_y]->AddValue(num);
-    //不知道为啥得用指针
-    Step *tmp = new Step;
-    tmp->SetInstruct("click");
-    tmp->SetPos(_x,_y);
-    undoArr.push(tmp);
+    if(_x > 0 && _y > 0) {
+        block[_x][_y]->AddValue(num);
+    }
+    PushStep(_x, _y, num, "click");
     //CheckCurBlock();
 }
 
@@ -119,13 +119,43 @@ void MainWindow::KeyPressed(int num)
 void MainWindow::Undo()
 {
     Step *tmp = undoArr.pop();
-    int && _x = tmp->Pos().x(), && _y = tmp->Pos().y();
+    int && _x = tmp->Pos().x(), && _y = tmp->Pos().y(), && _v = tmp->Value();
     redoArr.push(tmp);
     QString && qstr = tmp->Instruct();
-    if(qstr == "click")
-    {
+    if(qstr == "click") {
         block[_x][_y]->RemoveTail();
     }
+    else if(qstr == "mark") {
+        bool tmpMark = block[_x][_y]->marked;
+        block[_x][_y]->marked = !tmpMark;
+    }
+    else if(_v == -2) {
+        block[_x][_y]->SetContent(tmp->Instruct());
+    }
+    curBlock.setX(_x);
+    curBlock.setY(_y);
+    emit BlockChosen(_x, _y, block[_x][_y]->num(), HighlightType());
+}
+
+void MainWindow::Redo()
+{
+    Step *tmp = redoArr.pop();
+    int && _x = tmp->Pos().x(), && _y = tmp->Pos().y(), && _n = tmp->Value();
+    undoArr.push(tmp);
+    QString && qstr = tmp->Instruct();
+    if(qstr == "click") {
+        block[_x][_y]->AddValue(_n);
+    }
+    else if(qstr == "mark") {
+        bool tmpMark = block[_x][_y]->marked;
+        block[_x][_y]->marked = !tmpMark;
+    }
+    else if(_n == -2) {
+        block[_x][_y]->clearBlock();
+    }
+    curBlock.setX(_x);
+    curBlock.setY(_y);
+    emit BlockChosen(_x, _y, block[_x][_y]->num(), HighlightType());
 }
 
 /*void MainWindow::CheckCurBlock()
@@ -245,6 +275,17 @@ void MainWindow::SetupMenu()
 
 }
 
+void MainWindow::PushStep(int &x, int &y, int num, QString qstr)
+{
+    //不知道为啥得用指针
+    Step *tmpStep = new Step;
+    tmpStep->SetInstruct(qstr);
+    tmpStep->SetPos(x, y);
+    tmpStep->SetValue(num);
+    undoArr.push(tmpStep);
+    redoArr.clear();
+}
+
 MainWindow::~MainWindow()
 {
     delete ui;
@@ -257,6 +298,7 @@ void MainWindow::on_restartButton_clicked()
         for(int j = 0; j < 9; j ++)
         {
             block[i][j]->clearBlock();
+            block[i][j]->changeColor(Qt::white);
         }
     }
     QTimer *tmp = timer;
@@ -272,7 +314,10 @@ void MainWindow::on_restartButton_clicked()
 
 void MainWindow::on_clearButton_clicked()
 {
-    block[curBlock.x()][curBlock.y()]->clearBlock();
+    int &&x = curBlock.x(), &&y = curBlock.y();
+    QString tmpStr = block[x][y]->Content();
+    block[x][y]->clearBlock();
+    PushStep(x, y, -2, tmpStr);//-2 as a signal.
 }
 
 void MainWindow::on_startButton_clicked()
@@ -293,11 +338,12 @@ void MainWindow::on_Resume_clicked()
 
 void MainWindow::on_markButton_clicked()
 {
-    int && _x = curBlock.x(), && _y = curBlock.y();
-    bool flag = block[curBlock.x()][curBlock.y()]->marked;
-    block[curBlock.x()][curBlock.y()]->marked = !flag;
-    int tmp = block[curBlock.x()][curBlock.y()]->num();
-    emit BlockChosen(curBlock.x(), curBlock.y(), tmp, HighlightType());
+    int && _x = curBlock.x(), && _y = curBlock.y(), && _n = block[_x][_y]->num();
+    bool flag = block[_x][_y]->marked;
+    block[_x][_y]->marked = !flag;
+    int tmp = block[_x][_y]->num();
+    emit BlockChosen(_x, _y, tmp, HighlightType());
+    PushStep(_x, _y, _n, "mark");
 }
 
 void MainWindow::on_checkRC_clicked(bool checked)
@@ -316,5 +362,13 @@ void MainWindow::on_checkNum_clicked(bool checked)
 
 void MainWindow::on_undoButton_clicked()
 {
-    Undo();
+    if(!undoArr.empty())
+        Undo();
 }
+
+void MainWindow::on_redoButton_clicked()
+{
+    if(!redoArr.empty())
+        Redo();
+}
+

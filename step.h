@@ -12,12 +12,15 @@ public:
     Step();
     void SetInstruct(QString);
     void SetPos(int, int);
+    void SetValue(int);
     QString Instruct()const;
     QPoint Pos()const;
+    int Value()const;
 
 private:
     QString instruct;
     QPoint pos;
+    int value;
 };
 
 #endif // STEP_H
