@@ -17,8 +17,13 @@
 #include <QSignalMapper>
 #include <QTimer>
 #include <QStack>
+#include <QTextStream>
+#include <QFile>
+#include <fstream>
+#include <string>
 #include "gridLine.h"
 #include "step.h"
+#include "sudukomap.h"
 
 namespace Ui
 {
@@ -49,6 +54,8 @@ private slots:
     void on_checkNum_clicked(bool checked);
     void on_undoButton_clicked();
     void on_redoButton_clicked();
+    void ReadData();
+    void SetGame();
 
 signals:
     void BlockChosen(int,int,int,char);
@@ -67,6 +74,7 @@ private:
     QMenu *helpMenu;
     QTimer *timer;
     QStack <Step*> undoArr, redoArr;
+    QVector <SudukoMap> gameData;
     int curSec, curMin;
     Block *block[9][9];
     bool rcFlag, numFlag;
@@ -76,6 +84,7 @@ private:
     void KeyboardMapping();
     void Undo();
     void Redo();
+    void ClearMap();
     char HighlightType();
     void PushStep(int&,int&,int,QString);
     //void CheckCurBlock();

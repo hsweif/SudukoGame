@@ -14,6 +14,7 @@ Block::Block(QWidget *parent)
     marked = false;
     //this->setMouseTracking(true);
     number = -1;
+    enaFlag = true;
 }
 
 //Mac 上用左键选取会有种迷之bug。。。
@@ -27,6 +28,11 @@ void Block::mousePressEvent(QMouseEvent *event)
 QString Block::Content()const
 {
     return content;
+}
+
+bool Block::Enable()const
+{
+    return enaFlag;
 }
 void Block::RemoveTail()
 {
@@ -75,6 +81,10 @@ void Block::Highlight(int _x, int _y, int _num, char _type)
     {
         this->changeColor(Qt::yellow);
     }
+    else if(!enaFlag)
+    {
+        this->changeColor(Qt::gray);
+    }
     else{
         this->changeColor(Qt::white);
     }
@@ -94,19 +104,21 @@ void Block::clearBlock()
 
 void Block::AddValue(int _num)
 {
-    if(content.size() == 0)
-    {
+    if(content.size() == 0) {
         number = _num;
     }
-    content.append(QString::number(_num));
-    if(content.size() > 2) {
-        font.setPixelSize(18);
+    if(_num >= 0)
+    {
+        content.append(QString::number(_num));
+        if(content.size() > 2) {
+            font.setPixelSize(18);
+        }
+        else {
+            font.setPixelSize(30);
+        }
+        blockNum->setFont(font);
+        blockNum->setText(content);
     }
-    else {
-        font.setPixelSize(30);
-    }
-    blockNum->setFont(font);
-    blockNum->setText(content);
 }
 
 void Block::setValue(int a)
@@ -124,9 +136,9 @@ void Block::setValue(int a)
 
 }
 
-void Block::setEna(bool ok)
+void Block::SetEna(bool ok)
 {
-    blockNum->setEnabled(ok);
+    enaFlag = ok;
 }
 
 

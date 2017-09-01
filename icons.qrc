@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>Resource/clock.png</file>
+        <file>gameMap_1.txt</file>
     </qresource>
 </RCC>

@@ -25,11 +25,12 @@ public:
     void setPos(int x,int y);
     void setValue(int a);
     void AddValue(int);
-    void setEna(bool ok);
+    void SetEna(bool ok);
     void clearBlock();
     void RemoveTail();
     void SetContent(QString);
     QString Content()const;
+    bool Enable()const;
 private slots:
     void dataChange(const QString & data);
     void Highlight(int, int, int, char);
@@ -42,6 +43,7 @@ private:
     QFont font;
     int number;
     QPoint p;
+    bool enaFlag;
     QString content;
     void mousePressEvent(QMouseEvent*);
     //void mouseReleaseEvent(QMouseEvent*);

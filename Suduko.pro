@@ -27,12 +27,14 @@ SOURCES += main.cpp\
         mainwindow.cpp \
     block.cpp \
     gridLine.cpp \
-    step.cpp
+    step.cpp \
+    sudukomap.cpp
 
 HEADERS  += mainwindow.h \
     block.h \
     gridLine.h \
-    step.h
+    step.h \
+    sudukomap.h
 
 FORMS    += mainwindow.ui
 

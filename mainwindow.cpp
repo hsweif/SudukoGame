@@ -12,6 +12,7 @@ MainWindow::MainWindow(QWidget *parent):
     SetupBlocks();
     PaintLine();
     SetupMenu();
+    ReadData();
     /*
      *	UI界面的初始化配置，混用UI Designer和代码控制
      * 	包括一些排版以及选单的配置
@@ -108,10 +109,11 @@ void MainWindow::KeyboardMapping()
 void MainWindow::KeyPressed(int num)
 {
     int && _x = curBlock.x(), && _y = curBlock.y();
-    if(_x > 0 && _y > 0) {
+    if(_x > 0 && _y > 0 && block[_x][_y]->Enable()) {
         block[_x][_y]->AddValue(num);
     }
     PushStep(_x, _y, num, "click");
+    emit BlockChosen(_x, _y, num, HighlightType());
     //CheckCurBlock();
 }
 
@@ -124,6 +126,8 @@ void MainWindow::Undo()
     QString && qstr = tmp->Instruct();
     if(qstr == "click") {
         block[_x][_y]->RemoveTail();
+        if(block[_x][_y]->Content().size() == 0)
+            block[_x][_y]->AddValue(-1);
     }
     else if(qstr == "mark") {
         bool tmpMark = block[_x][_y]->marked;
@@ -134,7 +138,12 @@ void MainWindow::Undo()
     }
     curBlock.setX(_x);
     curBlock.setY(_y);
-    emit BlockChosen(_x, _y, block[_x][_y]->num(), HighlightType());
+    int && _n = block[_x][_y]->num();
+    if(_n > 0)
+        emit BlockChosen(_x, _y, _n, HighlightType());
+    else
+        emit BlockChosen(_x, _y, 0, HighlightType());
+
 }
 
 void MainWindow::Redo()
@@ -286,12 +295,82 @@ void MainWindow::PushStep(int &x, int &y, int num, QString qstr)
     redoArr.clear();
 }
 
-MainWindow::~MainWindow()
+//Todo...there are lots of bugs bug don't know why...
+void MainWindow::ReadData()
 {
-    delete ui;
+    SudukoMap tmpMap;
+    QFile file(":/gameMap_1.txt");
+    QTextStream in(&file);
+    QString tmpstr;
+    if(!file.open(QIODevice::ReadOnly)) {
+        qDebug()<<"Can't open the file!";
+    }
+    /*while( !in.atEnd()){
+        qDebug()<<"open the file!";
+        QString line = in.readLine();
+        qDebug() << line;
+    }*/
+    while(!in.atEnd())
+    {
+        tmpMap.Clear();
+        for(int t = 0; t < 9; t++)
+        {
+            int count = 0;
+            tmpstr = in.readLine();
+            //qDebug() << tmpstr;
+            for(int i = 0; i < tmpstr.size(); i++)
+            {
+               if(count >= 9)
+                   break;
+               if(tmpstr[i] == ' ')
+                   continue;
+               if(tmpstr[i] == '_')
+                   tmpMap.SetData(t, count++, -1);
+               else {
+                   std::string stdstr = tmpstr.toStdString();
+                   int tmpNum = stdstr[i] - '0';
+                   //qDebug() << tmpNum;
+                   tmpMap.SetData(t, count++, tmpNum);
+               }
+            }
+        }
+        gameData.push_back(tmpMap);
+        for(int i = 0; i < 3; i++)//读取分割线与空白
+            tmpstr = in.readLine();
+     }
+    file.close();
+    //qDebug()<<"current applicationDirPath: "<<QCoreApplication::applicationDirPath();
+    //qDebug()<<"current currentPath: "<<QDir::currentPath();
 }
 
-void MainWindow::on_restartButton_clicked()
+//Test, to do...
+void MainWindow::SetGame()
+{
+    ClearMap();
+    int sz = gameData.size();
+    int randNum = rand() % sz;
+    if(!gameData.empty())
+    {
+        SudukoMap & tmpMap = gameData[randNum];
+        for(int i = 0; i < 9; i ++)
+        {
+            for(int j = 0; j < 9; j++)
+            {
+                if(tmpMap.Data(i,j) == -1) {
+                    block[i][j]->SetEna(true);
+                }
+                else
+                {
+                    block[i][j]->AddValue(tmpMap.Data(i,j));
+                    block[i][j]->SetEna(false);
+                    block[i][j]->changeColor(Qt::gray);
+                }
+            }
+        }
+    }
+}
+
+void MainWindow::ClearMap()
 {
     for(int i = 0; i < 9; i ++)
     {
@@ -299,8 +378,19 @@ void MainWindow::on_restartButton_clicked()
         {
             block[i][j]->clearBlock();
             block[i][j]->changeColor(Qt::white);
+            block[i][j]->SetEna(true);
         }
     }
+}
+
+MainWindow::~MainWindow()
+{
+    delete ui;
+}
+
+void MainWindow::on_restartButton_clicked()
+{
+    ClearMap();
     QTimer *tmp = timer;
     timer = new QTimer(this);
     timer->setInterval(1000);
@@ -323,6 +413,7 @@ void MainWindow::on_clearButton_clicked()
 void MainWindow::on_startButton_clicked()
 {
     timer->start(1000);
+    SetGame();
 }
 
 void MainWindow::on_Pause_clicked()
