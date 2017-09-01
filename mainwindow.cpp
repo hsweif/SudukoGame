@@ -40,6 +40,7 @@ MainWindow::MainWindow(QWidget *parent):
     rcFlag = false; numFlag = false;
     curBlock.setX(-1);
     curBlock.setY(-1);
+    sol = new Solver;
 }
 
 void MainWindow::UpdateTime()
@@ -352,7 +353,8 @@ void MainWindow::SetGame()
     if(!gameData.empty())
     {
         SudukoMap & tmpMap = gameData[randNum];
-        for(int i = 0; i < 9; i ++)
+        FillMap(tmpMap);
+        /*for(int i = 0; i < 9; i ++)
         {
             for(int j = 0; j < 9; j++)
             {
@@ -366,8 +368,22 @@ void MainWindow::SetGame()
                     block[i][j]->changeColor(Qt::gray);
                 }
             }
+        }*/
+    }
+}
+
+SudukoMap MainWindow::CurrentMap()
+{
+    SudukoMap tmp;
+    for(int i = 0; i < 9; i ++)
+    {
+        for(int j = 0; j < 9; j++)
+        {
+            if(!block[i][j]->Enable())
+                tmp.SetData(i, j, block[i][j]->num());
         }
     }
+    return tmp;
 }
 
 void MainWindow::ClearMap()
@@ -379,6 +395,26 @@ void MainWindow::ClearMap()
             block[i][j]->clearBlock();
             block[i][j]->changeColor(Qt::white);
             block[i][j]->SetEna(true);
+        }
+    }
+}
+
+void MainWindow::FillMap(SudukoMap &tmpMap)
+{
+    ClearMap();
+    for(int i = 0; i < 9; i ++)
+    {
+        for(int j = 0; j < 9; j++)
+        {
+            if(tmpMap.Data(i,j) == -1) {
+                block[i][j]->SetEna(true);
+            }
+            else
+            {
+                block[i][j]->AddValue(tmpMap.Data(i,j));
+                block[i][j]->SetEna(false);
+                block[i][j]->changeColor(Qt::gray);
+            }
         }
     }
 }
@@ -463,3 +499,9 @@ void MainWindow::on_redoButton_clicked()
         Redo();
 }
 
+//Todo
+void MainWindow::on_solveButton_clicked()
+{
+    //SudukoMap tmpMap = sol->Solve(CurrentMap());
+    //FillMap(tmpMap);
+}

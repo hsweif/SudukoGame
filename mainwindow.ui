@@ -17,7 +17,7 @@
    <widget class="QWidget" name="gridLayoutWidget">
     <property name="geometry">
      <rect>
-      <x>460</x>
+      <x>450</x>
       <y>10</y>
       <width>171</width>
       <height>411</height>
@@ -283,6 +283,13 @@
       <widget class="QCheckBox" name="checkNum">
        <property name="text">
         <string>相同数字</string>
+       </property>
+      </widget>
+     </item>
+     <item row="12" column="1">
+      <widget class="QPushButton" name="solveButton">
+       <property name="text">
+        <string>Solve</string>
        </property>
       </widget>
      </item>

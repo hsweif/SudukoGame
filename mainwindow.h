@@ -24,6 +24,7 @@
 #include "gridLine.h"
 #include "step.h"
 #include "sudukomap.h"
+#include "solver.h"
 
 namespace Ui
 {
@@ -57,6 +58,8 @@ private slots:
     void ReadData();
     void SetGame();
 
+    void on_solveButton_clicked();
+
 signals:
     void BlockChosen(int,int,int,char);
 
@@ -77,6 +80,7 @@ private:
     QVector <SudukoMap> gameData;
     int curSec, curMin;
     Block *block[9][9];
+    Solver *sol;
     bool rcFlag, numFlag;
     void SetupBlocks();
     void PaintLine();
@@ -85,7 +89,9 @@ private:
     void Undo();
     void Redo();
     void ClearMap();
+    void FillMap(SudukoMap &tmpMap);
     char HighlightType();
+    SudukoMap CurrentMap();
     void PushStep(int&,int&,int,QString);
     //void CheckCurBlock();
 };
