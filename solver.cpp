@@ -9,11 +9,13 @@ SudukoMap Solver::Solve(SudukoMap mp)
     todoMap = mp;
     Init();
     DFS(0,0);
+    //qDebug() << "hi";
     return ansMap;
 }
 
 void Solver::Init()
 {
+    //qDebug() << "init...";
     for(int i = 0 ; i < 9; i ++)
     {
         for(int j = 1; j <= 9; j ++)
@@ -28,6 +30,7 @@ void Solver::Init()
         for(int j = 0; j< 9; j ++)
         {
             int n = todoMap.Data(i,j);
+            //qDebug() << n;
             if(n != -1)
             {
                 col[i][n] = true;
@@ -53,8 +56,22 @@ bool Solver::Fill(int x, int y, int k)
         row[y][k] = true;
         block[Area(x,y)][k] = true;
         todoMap.SetData(x, y, k);
+        //qDebug() << "ok";
         return true;
     }
+}
+
+bool Solver::Check()
+{
+    for(int i = 0; i < 9; i++)
+    {
+        for(int j = 0; j < 9;j ++)
+        {
+            if(todoMap.Data(i,j) == -1)
+                return false;
+        }
+    }
+    return true;
 }
 
 void Solver::Delete(int x, int y, int k)
@@ -67,10 +84,12 @@ void Solver::Delete(int x, int y, int k)
 
 void Solver::DFS(int x, int y)
 {
+    // 第二次以后没有跑进来，why？
     //qDebug() << x << y;
+    //if(x == 9 && y == 0)
     if(x == 9 && y == 0)
     {
-        //qDebug() << "hello";
+        qDebug() << "solved";
         ansMap = todoMap;
         return;
     }

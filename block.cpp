@@ -98,6 +98,7 @@ int Block::num()const
 void Block::clearBlock()
 {
     content.clear();
+    //qDebug() << "block size: " << content.size();
     blockNum->setText("");
     number = -1;
 }
@@ -107,7 +108,7 @@ void Block::AddValue(int _num)
     if(content.size() == 0) {
         number = _num;
     }
-    if(_num >= 0)
+    if(_num > 0)
     {
         content.append(QString::number(_num));
         if(content.size() > 2) {

@@ -81,6 +81,7 @@ private:
     int curSec, curMin;
     Block *block[9][9];
     Solver *sol;
+    SudukoMap curMap;
     bool rcFlag, numFlag;
     void SetupBlocks();
     void PaintLine();
@@ -89,7 +90,7 @@ private:
     void Undo();
     void Redo();
     void ClearMap();
-    void FillMap(SudukoMap &tmpMap);
+    void FillMap(SudukoMap tmpMap);
     char HighlightType();
     SudukoMap CurrentMap();
     void PushStep(int&,int&,int,QString);

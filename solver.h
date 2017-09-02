@@ -19,6 +19,8 @@ private:
     bool Fill(int x, int y, int k);
     void Delete(int x, int y, int k);
     void Init();
+    bool Check();
+    int count;
 };
 
 #endif // SOLVER_H

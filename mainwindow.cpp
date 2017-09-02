@@ -347,12 +347,12 @@ void MainWindow::ReadData()
 //Test, to do...
 void MainWindow::SetGame()
 {
-    ClearMap();
     int sz = gameData.size();
     int randNum = rand() % sz;
     if(!gameData.empty())
     {
-        SudukoMap & tmpMap = gameData[randNum];
+        SudukoMap tmpMap = gameData[randNum];
+        //curMap = tmpMap;
         FillMap(tmpMap);
         /*for(int i = 0; i < 9; i ++)
         {
@@ -395,13 +395,15 @@ void MainWindow::ClearMap()
             block[i][j]->clearBlock();
             block[i][j]->changeColor(Qt::white);
             block[i][j]->SetEna(true);
+            block[i][j]->AddValue(-1);
+            //curMap.Clear();
         }
     }
 }
 
-void MainWindow::FillMap(SudukoMap &tmpMap)
+void MainWindow::FillMap(SudukoMap tmpMap)
 {
-    qDebug() << "fill map";
+    //qDebug() << "fill map";
     ClearMap();
     for(int i = 0; i < 9; i ++)
     {
@@ -413,11 +415,11 @@ void MainWindow::FillMap(SudukoMap &tmpMap)
             }
             else
             {
-                block[i][j]->AddValue(tmpMap.Data(i,j));
                 //block[i][j]->setValue(tmpMap.Data(i,j));
                 block[i][j]->SetEna(false);
                 block[i][j]->changeColor(Qt::gray);
             }
+            block[i][j]->AddValue(tmpMap.Data(i,j));
         }
     }
 }
@@ -439,6 +441,7 @@ void MainWindow::on_restartButton_clicked()
     curSec =0; curMin = 0;
     ui->minute->setText("00");
     ui->second->setText("00");
+    //curMap.Clear();
 }
 
 void MainWindow::on_clearButton_clicked()
@@ -499,7 +502,7 @@ void MainWindow::on_undoButton_clicked()
 void MainWindow::on_redoButton_clicked()
 {
     if(!redoArr.empty())
-        Redo();
+       Redo();
 }
 
 //Todo
