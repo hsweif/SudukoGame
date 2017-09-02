@@ -401,6 +401,7 @@ void MainWindow::ClearMap()
 
 void MainWindow::FillMap(SudukoMap &tmpMap)
 {
+    qDebug() << "fill map";
     ClearMap();
     for(int i = 0; i < 9; i ++)
     {
@@ -408,10 +409,12 @@ void MainWindow::FillMap(SudukoMap &tmpMap)
         {
             if(tmpMap.Data(i,j) == -1) {
                 block[i][j]->SetEna(true);
+                //block[i][j]->setValue(-1);
             }
             else
             {
                 block[i][j]->AddValue(tmpMap.Data(i,j));
+                //block[i][j]->setValue(tmpMap.Data(i,j));
                 block[i][j]->SetEna(false);
                 block[i][j]->changeColor(Qt::gray);
             }
@@ -502,6 +505,10 @@ void MainWindow::on_redoButton_clicked()
 //Todo
 void MainWindow::on_solveButton_clicked()
 {
-    //SudukoMap tmpMap = sol->Solve(CurrentMap());
-    //FillMap(tmpMap);
+    qDebug() << "solving";
+    SudukoMap tmpMap, curMap = CurrentMap();
+    tmpMap = sol->Solve(curMap);
+    FillMap(tmpMap);
+    //SudukoMap tmp = CurrentMap();
+    //FillMap(tmp);
 }

@@ -20,5 +20,5 @@ void SudukoMap::SetData(int x, int y, int num)
 void SudukoMap::Clear()
 {
     for(int i = 0; i < 81; i++)
-        data[i] = 0;
+        data[i] = -1;
 }

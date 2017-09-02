@@ -2,35 +2,40 @@
 
 Solver::Solver()
 {
-    for(int i = 0; i < 9; i++)
-    {
-        for(int j = 0 ;j < 10; j++)
-        {
-            col[i][j] = false;
-            row[i][j] = false;
-            block[i][j] = false;
-        }
-    }
 }
 
 SudukoMap Solver::Solve(SudukoMap mp)
 {
-    ansMap = mp;
+    todoMap = mp;
+    Init();
+    DFS(0,0);
+    return ansMap;
+}
+
+void Solver::Init()
+{
     for(int i = 0 ; i < 9; i ++)
     {
-        for(int j = 0; j < 0; j ++)
+        for(int j = 1; j <= 9; j ++)
         {
-            int n = ansMap.Data(i, j);
+           col[i][j] = false;
+           row[i][j] = false;
+           block[i][j] = false;
+        }
+    }
+    for(int i = 0; i < 9; i ++)
+    {
+        for(int j = 0; j< 9; j ++)
+        {
+            int n = todoMap.Data(i,j);
             if(n != -1)
             {
-               col[i][n] = true;
-               row[j][n] = true;
-               block[Area(i,j)][n] = true;
+                col[i][n] = true;
+                row[j][n] = true;
+                block[Area(i,j)][n] = true;
             }
         }
     }
-    DFS(0,0);
-    return ansMap;
 }
 
 int Solver::Area(int x, int y)
@@ -47,7 +52,7 @@ bool Solver::Fill(int x, int y, int k)
         col[x][k] = true;
         row[y][k] = true;
         block[Area(x,y)][k] = true;
-        ansMap.SetData(x, y, k);
+        todoMap.SetData(x, y, k);
         return true;
     }
 }
@@ -57,16 +62,22 @@ void Solver::Delete(int x, int y, int k)
     col[x][k] = false;
     row[y][k] = false;
     block[Area(x,y)][k] = false;
-    ansMap.SetData(x, y, -1);
+    todoMap.SetData(x, y, -1);
 }
 
-//这个DFS不对，重写
 void Solver::DFS(int x, int y)
 {
-    /*if(x == 9 || y == 9)
+    //qDebug() << x << y;
+    if(x == 9 && y == 0)
+    {
+        //qDebug() << "hello";
+        ansMap = todoMap;
         return;
-    if(ansMap.Data(x, y) != -1)
+    }
+    if(todoMap.Data(x, y) != -1)
+    {
         Next(x, y);
+    }
     else
     {
        for(int k = 1; k <= 9; k ++)
@@ -77,5 +88,5 @@ void Solver::DFS(int x, int y)
                Delete(x, y, k);
            }
        }
-    }*/
+    }
 }

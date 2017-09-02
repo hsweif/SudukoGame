@@ -1,8 +1,9 @@
 #ifndef SOLVER_H
 #define SOLVER_H
 
+#include <QDebug>
 #include "sudukomap.h"
-#define Next(x,y) y == 8 ? DFS(x+1, y) : DFS(x, y+1)
+#define Next(x,y) y == 8 ? DFS(x+1, 0) : DFS(x, y+1)
 
 class Solver
 {
@@ -17,6 +18,7 @@ private:
     int Area(int x, int y);
     bool Fill(int x, int y, int k);
     void Delete(int x, int y, int k);
+    void Init();
 };
 
 #endif // SOLVER_H
