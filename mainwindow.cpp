@@ -8,11 +8,9 @@ MainWindow::MainWindow(QWidget *parent):
     ui->setupUi(this);
     frame = new QFrame(this);
     QHBoxLayout *hLayout = new QHBoxLayout;
-    //QPushButton *button = new QPushButton;
     SetupBlocks();
     PaintLine();
-    SetupMenu();
-    ReadData();
+    //ReadData();
     /*
      *	UI界面的初始化配置，混用UI Designer和代码控制
      * 	包括一些排版以及选单的配置
@@ -23,9 +21,11 @@ MainWindow::MainWindow(QWidget *parent):
     setLayout(hLayout);
     this->setFixedSize(frame->width()+180,frame->height());
     this->setWindowTitle("Suduko Game!");
-    ui->levelBox->addItem("Hard");
-    ui->levelBox->addItem("Normal");
+    ui->levelBox->addItem("Beginner");
     ui->levelBox->addItem("Easy");
+    ui->levelBox->addItem("Normal");
+    ui->levelBox->addItem("Hard");
+    ui->levelBox->addItem("Master");
     //ui->centralWidget->setMouseTracking(true);
     /*
      * 计时器的初始化设置
@@ -41,6 +41,7 @@ MainWindow::MainWindow(QWidget *parent):
     curBlock.setX(-1);
     curBlock.setY(-1);
     sol = new Solver;
+    infobox = new InfoBox;
     /*
      *	信号与槽的连接区
      */
@@ -114,10 +115,11 @@ void MainWindow::KeyboardMapping()
 void MainWindow::KeyPressed(int num)
 {
     int && _x = curBlock.x(), && _y = curBlock.y();
-    if(_x > 0 && _y > 0 && block[_x][_y]->Enable()) {
+    if(_x >= 0 && _y >= 0 && !curMap.Original(_x, _y)) {
         block[_x][_y]->AddValue(num);
     }
     PushStep(_x, _y, num, "click");
+    emit Check();
     emit BlockChosen(_x, _y, num, HighlightType());
     //CheckCurBlock();
 }
@@ -172,36 +174,12 @@ void MainWindow::Redo()
     emit BlockChosen(_x, _y, block[_x][_y]->num(), HighlightType());
 }
 
-/*void MainWindow::CheckCurBlock()
-{
-    if(block[curBlock.x()][curBlock.y()]->num() != -1)
-    {
-        for(int i = 0; i < 9; i++)
-        {
-            if(block[curBlock.x()][curBlock.y()]->num() == block[curBlock.x()][i]->num()
-                    && curBlock.y() != i)
-            {
-                block[curBlock.x()][curBlock.y()]->changeColor(Qt::red);
-                break;
-            }
-            if(block[curBlock.x()][curBlock.y()]->num() == block[i][curBlock.y()]->num()
-                    && curBlock.x() != i)
-            {
-                block[curBlock.x()][curBlock.y()]->changeColor(Qt::red);
-                break;
-            }
-            //九宫格的待填充
-        }
-    }
-
-}*/
-
 void MainWindow::UpdateCurBlock(int _x, int _y)
 {
     curBlock.setX(_x);
     curBlock.setY(_y);
     emit BlockChosen(_x, _y,block[_x][_y]->num(),HighlightType());
-    emit Check();
+    //emit Check();
     timer->start(1000);
 }
 
@@ -231,9 +209,11 @@ void MainWindow::CheckResult()
 {
     SudukoMap curM = CurrentState();
     if(sol->Check(curM))
-        qDebug() << "win";
-    else
-        qDebug() << "not yet";
+    {
+        this->infobox->setWindowTitle("Hi, genius");
+        this->infobox->SetText("You win the game!");
+        this->infobox->show();
+    }
 }
 
 void MainWindow::PaintLine()
@@ -253,7 +233,7 @@ void MainWindow::PaintLine()
         if(i>0)
         {
             horizontalLine[i]->move(block[0][i*3+1]->pos().x()+block[0][i*3+1]->width()-2,0);
-            verticalLine[i]->move(0,block[i*3-1][0]->pos().y()+block[i*3-1][0]->height()+ui->menuBar->height()-2);
+            verticalLine[i]->move(0,block[i*3-1][0]->pos().y()+block[i*3-1][0]->height() + 19);//+ui->menuBar->height()-2);
         }
         else
         {
@@ -263,41 +243,6 @@ void MainWindow::PaintLine()
     }
 }
 
-void MainWindow::SetupMenu()
-{
-    operaMenu=new QMenu(tr("操作(&O)"),this);
-    ui->menuBar->addMenu(operaMenu);
-
-    runAction=new QAction(tr("执行"),this);
-    runAction->setShortcut(tr("Ctrl+r"));
-    runAction->setStatusTip("计算数独解法");
-    //connect(runAction,SIGNAL(triggered()),this,SLOT(run()));
-    operaMenu->addAction(runAction);
-
-    saveAction = new QAction(tr("储存"), this);
-    operaMenu->addAction(saveAction);
-
-    clearAction=new QAction(tr("初始化"),this);
-    clearAction->setShortcut(tr("ctrl+d"));
-    clearAction->setStatusTip("初始化当前数独表");
-    //connect(clearAction,SIGNAL(triggered()),this,SLOT(clear()));
-    operaMenu->addAction(clearAction);
-
-    quitAction=new QAction(tr("退出"),this);
-    quitAction->setShortcut(tr("ctrl+q"));
-    quitAction->setStatusTip("退出程序");
-    //connect(quitAction,SIGNAL(triggered()),this,SLOT(close()));
-    operaMenu->addAction(quitAction);
-
-    helpMenu=new QMenu(tr("帮助(&H)"),this);
-    ui->menuBar->addMenu(helpMenu);
-    aboutAction=new QAction(tr("关于"),this);
-    aboutAction->setShortcut(tr("Ctrl+I"));
-    aboutAction->setStatusTip("关于数独计算器");
-    //connect(aboutAction,SIGNAL(triggered()),this,SLOT(about()));
-    helpMenu->addAction(aboutAction);
-
-}
 
 void MainWindow::PushStep(int &x, int &y, int num, QString qstr)
 {
@@ -311,7 +256,7 @@ void MainWindow::PushStep(int &x, int &y, int num, QString qstr)
 }
 
 //Todo...there are lots of bugs bug don't know why...
-void MainWindow::ReadData()
+/*void MainWindow::ReadData()
 {
     SudukoMap tmpMap;
     QFile file(":/gameMap_1.txt");
@@ -320,11 +265,6 @@ void MainWindow::ReadData()
     if(!file.open(QIODevice::ReadOnly)) {
         qDebug()<<"Can't open the file!";
     }
-    /*while( !in.atEnd()){
-        qDebug()<<"open the file!";
-        QString line = in.readLine();
-        qDebug() << line;
-    }*/
     while(!in.atEnd())
     {
         tmpMap.Clear();
@@ -340,12 +280,18 @@ void MainWindow::ReadData()
                if(tmpstr[i] == ' ')
                    continue;
                if(tmpstr[i] == '_')
-                   tmpMap.SetData(t, count++, -1);
+               {
+                   tmpMap.SetData(t, count, -1);
+                   tmpMap.SetOriginal(t, count, false);
+                   count ++;
+               }
                else {
                    std::string stdstr = tmpstr.toStdString();
                    int tmpNum = stdstr[i] - '0';
                    //qDebug() << tmpNum;
-                   tmpMap.SetData(t, count++, tmpNum);
+                   tmpMap.SetData(t, count, tmpNum);
+                   tmpMap.SetOriginal(t, count, true);
+                   count ++;
                }
             }
         }
@@ -354,50 +300,27 @@ void MainWindow::ReadData()
             tmpstr = in.readLine();
      }
     file.close();
-    //qDebug()<<"current applicationDirPath: "<<QCoreApplication::applicationDirPath();
-    //qDebug()<<"current currentPath: "<<QDir::currentPath();
-}
+}*/
 
 //Test, to do...
 void MainWindow::SetGame()
 {
-    int sz = gameData.size();
+    /*int sz = gameData.size();
     int randNum = rand() % sz;
     if(!gameData.empty())
     {
-        SudukoMap tmpMap = gameData[randNum];
-        //curMap = tmpMap;
-        FillMap(tmpMap);
-        /*for(int i = 0; i < 9; i ++)
-        {
-            for(int j = 0; j < 9; j++)
-            {
-                if(tmpMap.Data(i,j) == -1) {
-                    block[i][j]->SetEna(true);
-                }
-                else
-                {
-                    block[i][j]->AddValue(tmpMap.Data(i,j));
-                    block[i][j]->SetEna(false);
-                    block[i][j]->changeColor(Qt::gray);
-                }
-            }
-        }*/
-    }
+        curMap = gameData[randNum];
+        FillMap(curMap);
+    }*/
+    int level = ui->levelBox->currentIndex() + 1;
+    //qDebug() << level;
+    curMap = sol->GenerateMap(level);
+    FillMap(curMap);
 }
 
 SudukoMap MainWindow::CurrentMap()
 {
-    SudukoMap tmp;
-    for(int i = 0; i < 9; i ++)
-    {
-        for(int j = 0; j < 9; j++)
-        {
-            if(!block[i][j]->Enable())
-                tmp.SetData(i, j, block[i][j]->num());
-        }
-    }
-    return tmp;
+    return curMap;
 }
 
 SudukoMap MainWindow::CurrentState()
@@ -405,11 +328,7 @@ SudukoMap MainWindow::CurrentState()
     SudukoMap tmp;
     for(int i = 0; i < 9; i ++)
         for(int j = 0; j < 9; j++)
-        {
             tmp.SetData(i, j, block[i][j]->num());
-            //qDebug() << tmp.Data(i,j);
-        }
-
     return tmp;
 }
 
@@ -436,7 +355,8 @@ void MainWindow::FillMap(SudukoMap tmpMap)
     {
         for(int j = 0; j < 9; j++)
         {
-            if(tmpMap.Data(i,j) == -1) {
+            //if(tmpMap.Data(i,j) == -1) {
+            if(!tmpMap.Original(i,j)){
                 block[i][j]->SetEna(true);
                 //block[i][j]->setValue(-1);
             }
@@ -451,6 +371,20 @@ void MainWindow::FillMap(SudukoMap tmpMap)
     }
 }
 
+void MainWindow::TimerRestart()
+{
+    QTimer *tmp = timer;
+    timer = new QTimer(this);
+    timer->setInterval(1000);
+    timer->start(1000);
+    connect(timer, SIGNAL(timeout()), this, SLOT(UpdateTime()));
+    disconnect(tmp, SIGNAL(timeout()), this, SLOT(UpdateTime()));
+    delete tmp;
+    curSec =0; curMin = 0;
+    ui->minute->setText("00");
+    ui->second->setText("00");
+}
+
 MainWindow::~MainWindow()
 {
     delete ui;
@@ -458,41 +392,55 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_restartButton_clicked()
 {
-    ClearMap();
-    QTimer *tmp = timer;
-    timer = new QTimer(this);
-    timer->setInterval(1000);
-    connect(timer, SIGNAL(timeout()), this, SLOT(UpdateTime()));
-    disconnect(tmp, SIGNAL(timeout()), this, SLOT(UpdateTime()));
-    delete tmp;
-    curSec =0; curMin = 0;
-    ui->minute->setText("00");
-    ui->second->setText("00");
+    TimerRestart();
+    FillMap(curMap);
     //curMap.Clear();
 }
 
 void MainWindow::on_clearButton_clicked()
 {
     int &&x = curBlock.x(), &&y = curBlock.y();
-    QString tmpStr = block[x][y]->Content();
-    block[x][y]->clearBlock();
-    PushStep(x, y, -2, tmpStr);//-2 as a signal.
+    if(!curMap.Original(x, y))
+    {
+        QString tmpStr = block[x][y]->Content();
+        block[x][y]->clearBlock();
+        PushStep(x, y, -2, tmpStr);//-2 as a signal.
+        emit BlockChosen(x, y, -1, HighlightType());
+    }
 }
 
 void MainWindow::on_startButton_clicked()
 {
-    timer->start(1000);
+    TimerRestart();
     SetGame();
 }
 
 void MainWindow::on_Pause_clicked()
 {
     timer->stop();
+    disconnect(keyboardMapper, SIGNAL(mapped(int)), this, SLOT(KeyPressed(int)));
+    for(int i = 0; i < 9; i ++)
+    {
+        for(int j = 0; j < 9; j ++)
+        {
+            disconnect(block[i][j], SIGNAL(Chosen(int,int)), this, SLOT(UpdateCurBlock(int,int)));
+            disconnect(this, SIGNAL(BlockChosen(int,int,int,char)), block[i][j], SLOT(Highlight(int,int,int,char)));
+        }
+    }
 }
 
 void MainWindow::on_Resume_clicked()
 {
     timer->start(1000);
+    connect(keyboardMapper, SIGNAL(mapped(int)), this, SLOT(KeyPressed(int)));
+    for(int i = 0; i < 9; i ++)
+    {
+        for(int j = 0; j < 9; j ++)
+        {
+            connect(block[i][j], SIGNAL(Chosen(int,int)), this, SLOT(UpdateCurBlock(int,int)));
+            connect(this, SIGNAL(BlockChosen(int,int,int,char)), block[i][j], SLOT(Highlight(int,int,int,char)));
+        }
+    }
 }
 
 
@@ -532,13 +480,10 @@ void MainWindow::on_redoButton_clicked()
        Redo();
 }
 
-//Todo
 void MainWindow::on_solveButton_clicked()
 {
-    qDebug() << "solving";
+    //qDebug() << "solving";
     SudukoMap tmpMap, curMap = CurrentMap();
     tmpMap = sol->Solve(curMap);
     FillMap(tmpMap);
-    //SudukoMap tmp = CurrentMap();
-    //FillMap(tmp);
 }

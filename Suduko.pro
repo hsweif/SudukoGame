@@ -29,16 +29,19 @@ SOURCES += main.cpp\
     gridLine.cpp \
     step.cpp \
     sudukomap.cpp \
-    solver.cpp
+    solver.cpp \
+    infobox.cpp
 
 HEADERS  += mainwindow.h \
     block.h \
     gridLine.h \
     step.h \
     sudukomap.h \
-    solver.h
+    solver.h \
+    infobox.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    infobox.ui
 
 RESOURCES += \
     icons.qrc

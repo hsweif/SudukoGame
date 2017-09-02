@@ -25,6 +25,7 @@
 #include "step.h"
 #include "sudukomap.h"
 #include "solver.h"
+#include "infobox.h"
 
 namespace Ui
 {
@@ -56,7 +57,6 @@ private slots:
     void on_checkNum_clicked(bool checked);
     void on_undoButton_clicked();
     void on_redoButton_clicked();
-
     void on_solveButton_clicked();
 
 signals:
@@ -68,29 +68,24 @@ private:
     QFrame *frame;
     QPoint curBlock;
     QSignalMapper *keyboardMapper;
-    QAction *clearAction;
-    QAction *runAction;
-    QAction *quitAction;
-    QAction *aboutAction;
-    QAction *saveAction;
-    QMenu *operaMenu;
-    QMenu *helpMenu;
     QTimer *timer;
     QStack <Step*> undoArr, redoArr;
-    QVector <SudukoMap> gameData;
+    //QVector <SudukoMap> gameData;
     int curSec, curMin;
     Block *block[9][9];
+    InfoBox *infobox;
     Solver *sol;
     SudukoMap curMap;
+
     bool rcFlag, numFlag;
     void SetupBlocks();
     void PaintLine();
-    void SetupMenu();
     void KeyboardMapping();
     void Undo();
     void Redo();
     void ClearMap();
-    void ReadData();
+    void TimerRestart();
+    //void ReadData();
     void SetGame();
     void FillMap(SudukoMap tmpMap);
     char HighlightType();

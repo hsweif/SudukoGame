@@ -3,8 +3,7 @@
 SudukoMap::SudukoMap()
 {
     //To check
-    for(int i = 0; i < 81; i++)
-        data[i] = -1;
+    Clear();
 }
 
 int SudukoMap::Data(int x, int y)const
@@ -20,5 +19,18 @@ void SudukoMap::SetData(int x, int y, int num)
 void SudukoMap::Clear()
 {
     for(int i = 0; i < 81; i++)
+    {
         data[i] = -1;
+        original[i] = true;
+    }
+}
+
+bool SudukoMap::Original(int x, int y)
+{
+    return original[x*9 + y];
+}
+
+void SudukoMap::SetOriginal(int x, int y, bool flag)
+{
+    original[x*9 + y] = flag;
 }

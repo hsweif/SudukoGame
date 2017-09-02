@@ -101,7 +101,7 @@ void Solver::DFS(int x, int y)
 {
     if(x == 9 && y == 0)
     {
-        qDebug() << "solved";
+        //qDebug() << "solved";
         ansMap = todoMap;
         return;
     }
@@ -119,5 +119,146 @@ void Solver::DFS(int x, int y)
                Delete(x, y, k);
            }
        }
+    }
+}
+
+SudukoMap Solver::GenerateMap(int level)
+{
+    outputMap.Clear();
+    srcArr.clear();
+    srand(time(NULL));
+    CenterInit();
+    CrossInit();
+    CornerInit();
+    level *= 15;
+    while(level --)
+    {
+        int x = rand() % 9, y = rand() % 9;
+        outputMap.SetData(x, y, -1);
+        outputMap.SetOriginal(x, y, false);
+    }
+    return outputMap;
+}
+
+void Solver::CenterInit()
+{
+    for(int i = 1; i <= 9 ; i++) {
+        srcArr.push_back(i);
+    }
+    std::random_shuffle(srcArr.begin(), srcArr.end());
+    int k = 0;
+    for(int i = 3; i < 6; i ++)
+        for(int j = 3;j < 6; j ++) {
+            outputMap.SetData(i, j, srcArr[k++]);
+        }
+
+}
+
+void Solver::CrossInit()
+{
+    for(int i = 3; i < 6; i++)
+    {
+        int k = 0;
+        for(int j = 3; j < 6; j++)
+        {
+            if(i == 3)
+            {
+                outputMap.SetData(i+1, k, outputMap.Data(i, j));
+                outputMap.SetData(i+2, k+6, outputMap.Data(i, j));
+                k++;
+            }
+            else if(i == 4)
+            {
+                outputMap.SetData(i+1, k, outputMap.Data(i, j));
+                outputMap.SetData(i-1, k+6, outputMap.Data(i, j));
+                k++;
+            }
+            else if(i == 5)
+            {
+                outputMap.SetData(i-2, k, outputMap.Data(i, j));
+                outputMap.SetData(i-1, k+6, outputMap.Data(i, j));
+                k++;
+            }
+        }
+    }
+    for(int j = 3; j < 6; j ++)
+    {
+        int k = 0;
+        for(int i = 3; i < 6; i ++)
+        {
+            if(j == 3)
+            {
+                outputMap.SetData(k, j+1, outputMap.Data(i, j));
+                outputMap.SetData(k+6, j+2, outputMap.Data(i, j));
+                k++;
+            }
+            else if(j == 4)
+            {
+                outputMap.SetData(k, j+1, outputMap.Data(i, j));
+                outputMap.SetData(k+6, j-1, outputMap.Data(i, j));
+                k++;
+
+            }
+            else if(j == 5)
+            {
+                outputMap.SetData(k, j-2, outputMap.Data(i, j));
+                outputMap.SetData(k+6, j-1, outputMap.Data(i, j));
+                k++;
+            }
+        }
+    }
+}
+
+void Solver::CornerInit()
+{
+    for(int i = 0; i < 3; i++)
+    {
+        int k = 0;
+        for(int j = 3; j < 6; j++)
+        {
+            if(i == 0)
+            {
+                outputMap.SetData(i+1, k, outputMap.Data(i, j));
+                outputMap.SetData(i+2, k+6, outputMap.Data(i, j));
+                k++;
+            }
+            else if(i == 1)
+            {
+                outputMap.SetData(i+1, k, outputMap.Data(i, j));
+                outputMap.SetData(i-1, k+6, outputMap.Data(i, j));
+                k++;
+            }
+            else if(i == 2)
+            {
+                outputMap.SetData(i-2, k, outputMap.Data(i, j));
+                outputMap.SetData(i-1, k+6, outputMap.Data(i, j));
+                k++;
+            }
+        }
+    }
+    for(int i = 6; i < 9; i ++)
+    {
+        int k = 0;
+        for(int j = 3; j < 6; j ++)
+        {
+            if(i == 6)
+            {
+                outputMap.SetData(i+1, k, outputMap.Data(i, j));
+                outputMap.SetData(i+2, k+6, outputMap.Data(i, j));
+                k++;
+            }
+            else if(i == 7)
+            {
+                outputMap.SetData(i+1, k, outputMap.Data(i, j));
+                outputMap.SetData(i-1, k+6, outputMap.Data(i, j));
+                k++;
+            }
+            else if(i == 8)
+            {
+                outputMap.SetData(i-2, k, outputMap.Data(i, j));
+                outputMap.SetData(i-1, k+6, outputMap.Data(i, j));
+                k++;
+            }
+        }
     }
 }
