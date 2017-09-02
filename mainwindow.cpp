@@ -41,6 +41,10 @@ MainWindow::MainWindow(QWidget *parent):
     curBlock.setX(-1);
     curBlock.setY(-1);
     sol = new Solver;
+    /*
+     *	信号与槽的连接区
+     */
+    connect(this, SIGNAL(Check()), this, SLOT(CheckResult()));
 }
 
 void MainWindow::UpdateTime()
@@ -197,6 +201,7 @@ void MainWindow::UpdateCurBlock(int _x, int _y)
     curBlock.setX(_x);
     curBlock.setY(_y);
     emit BlockChosen(_x, _y,block[_x][_y]->num(),HighlightType());
+    emit Check();
     timer->start(1000);
 }
 
@@ -220,6 +225,15 @@ char MainWindow::HighlightType()
     else {
         return 'x';
     }
+}
+
+void MainWindow::CheckResult()
+{
+    SudukoMap curM = CurrentState();
+    if(sol->Check(curM))
+        qDebug() << "win";
+    else
+        qDebug() << "not yet";
 }
 
 void MainWindow::PaintLine()
@@ -383,6 +397,19 @@ SudukoMap MainWindow::CurrentMap()
                 tmp.SetData(i, j, block[i][j]->num());
         }
     }
+    return tmp;
+}
+
+SudukoMap MainWindow::CurrentState()
+{
+    SudukoMap tmp;
+    for(int i = 0; i < 9; i ++)
+        for(int j = 0; j < 9; j++)
+        {
+            tmp.SetData(i, j, block[i][j]->num());
+            //qDebug() << tmp.Data(i,j);
+        }
+
     return tmp;
 }
 

@@ -10,6 +10,7 @@ class Solver
 public:
     Solver();
     SudukoMap Solve(SudukoMap);
+    bool Check(SudukoMap mp);
 
 private:
     SudukoMap todoMap, ansMap;
@@ -19,7 +20,6 @@ private:
     bool Fill(int x, int y, int k);
     void Delete(int x, int y, int k);
     void Init();
-    bool Check();
     int count;
 };
 

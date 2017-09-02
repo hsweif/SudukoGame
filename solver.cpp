@@ -30,7 +30,6 @@ void Solver::Init()
         for(int j = 0; j< 9; j ++)
         {
             int n = todoMap.Data(i,j);
-            //qDebug() << n;
             if(n != -1)
             {
                 col[i][n] = true;
@@ -43,7 +42,8 @@ void Solver::Init()
 
 int Solver::Area(int x, int y)
 {
-    return (x/3)*3 + (y/3) + 1;
+    //跟下面初始化的开始结束数字要一致。。。。。。
+    return (int)(x/3)*3 + (int)(y/3);
 }
 
 bool Solver::Fill(int x, int y, int k)
@@ -56,19 +56,34 @@ bool Solver::Fill(int x, int y, int k)
         row[y][k] = true;
         block[Area(x,y)][k] = true;
         todoMap.SetData(x, y, k);
-        //qDebug() << "ok";
         return true;
     }
 }
 
-bool Solver::Check()
+bool Solver::Check(SudukoMap mp)
 {
-    for(int i = 0; i < 9; i++)
+    for(int i = 0; i < 9; i ++)
     {
-        for(int j = 0; j < 9;j ++)
+        for(int j = 1; j <= 9; j ++)
         {
-            if(todoMap.Data(i,j) == -1)
+            col[i][j] = false;
+            row[i][j] = false;
+            block[i][j] = false;
+        }
+    }
+    for(int i = 0; i < 9; i ++)
+    {
+        for(int j = 0; j < 9; j ++)
+        {
+            int k = mp.Data(i,j);
+            if(k == -1)
                 return false;
+            if(col[i][k] || row[j][k] || block[Area(i,j)][k]) {
+                return false;
+            }
+            col[i][k] = true;
+            row[j][k] = true;
+            block[Area(i,j)][k] = true;
         }
     }
     return true;
@@ -84,9 +99,6 @@ void Solver::Delete(int x, int y, int k)
 
 void Solver::DFS(int x, int y)
 {
-    // 第二次以后没有跑进来，why？
-    //qDebug() << x << y;
-    //if(x == 9 && y == 0)
     if(x == 9 && y == 0)
     {
         qDebug() << "solved";

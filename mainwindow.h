@@ -42,6 +42,7 @@ private slots:
     void UpdateCurBlock(int,int);
     void KeyPressed(int);
     void UpdateTime();
+    void CheckResult();
     /*
      *	Ui Designer生成的槽函数
      */
@@ -55,13 +56,12 @@ private slots:
     void on_checkNum_clicked(bool checked);
     void on_undoButton_clicked();
     void on_redoButton_clicked();
-    void ReadData();
-    void SetGame();
 
     void on_solveButton_clicked();
 
 signals:
     void BlockChosen(int,int,int,char);
+    void Check();
 
 private:
     Ui::MainWindow *ui;
@@ -90,9 +90,12 @@ private:
     void Undo();
     void Redo();
     void ClearMap();
+    void ReadData();
+    void SetGame();
     void FillMap(SudukoMap tmpMap);
     char HighlightType();
     SudukoMap CurrentMap();
+    SudukoMap CurrentState();
     void PushStep(int&,int&,int,QString);
     //void CheckCurBlock();
 };
