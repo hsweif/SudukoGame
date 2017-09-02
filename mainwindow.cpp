@@ -17,15 +17,21 @@ MainWindow::MainWindow(QWidget *parent):
      */
     KeyboardMapping();
     hLayout->addWidget(frame);
-    hLayout->addLayout(ui->Dial);
+    //hLayout->addLayout(ui->Dial);
+    hLayout->addWidget(ui->Dial);
     setLayout(hLayout);
-    this->setFixedSize(frame->width()+180,frame->height());
+    this->setFixedSize(frame->width()+250,frame->height());
     this->setWindowTitle("Suduko Game!");
     ui->levelBox->addItem("Beginner");
     ui->levelBox->addItem("Easy");
     ui->levelBox->addItem("Normal");
     ui->levelBox->addItem("Hard");
     ui->levelBox->addItem("Master");
+    /*QFont font;
+    font.setPixelSize(20);
+    ui->second->setFont(font);
+    ui->minute->setFont(font);
+    ui->dot->setFont(font);*/
     //ui->centralWidget->setMouseTracking(true);
     /*
      * 计时器的初始化设置
@@ -42,6 +48,7 @@ MainWindow::MainWindow(QWidget *parent):
     curBlock.setY(-1);
     sol = new Solver;
     infobox = new InfoBox;
+    processFlag = true;
     /*
      *	信号与槽的连接区
      */
@@ -115,12 +122,15 @@ void MainWindow::KeyboardMapping()
 void MainWindow::KeyPressed(int num)
 {
     int && _x = curBlock.x(), && _y = curBlock.y();
-    if(_x >= 0 && _y >= 0 && !curMap.Original(_x, _y)) {
-        block[_x][_y]->AddValue(num);
+    if(processFlag)
+    {
+        if(_x >= 0 && _y >= 0 && !curMap.Original(_x, _y)) {
+            block[_x][_y]->AddValue(num);
+        }
+        PushStep(_x, _y, num, "click");
+        emit Check();
+        emit BlockChosen(_x, _y, num, HighlightType());
     }
-    PushStep(_x, _y, num, "click");
-    emit Check();
-    emit BlockChosen(_x, _y, num, HighlightType());
     //CheckCurBlock();
 }
 
@@ -178,9 +188,11 @@ void MainWindow::UpdateCurBlock(int _x, int _y)
 {
     curBlock.setX(_x);
     curBlock.setY(_y);
-    emit BlockChosen(_x, _y,block[_x][_y]->num(),HighlightType());
-    //emit Check();
-    timer->start(1000);
+    if(processFlag)
+    {
+        emit BlockChosen(_x, _y,block[_x][_y]->num(),HighlightType());
+        timer->start(1000);
+    }
 }
 
 /**
@@ -314,6 +326,7 @@ void MainWindow::SetGame()
     }*/
     int level = ui->levelBox->currentIndex() + 1;
     //qDebug() << level;
+    ClearMap();
     curMap = sol->GenerateMap(level);
     FillMap(curMap);
 }
@@ -334,6 +347,8 @@ SudukoMap MainWindow::CurrentState()
 
 void MainWindow::ClearMap()
 {
+    curBlock.setX(-1);
+    curBlock.setY(-1);
     for(int i = 0; i < 9; i ++)
     {
         for(int j = 0; j < 9; j ++)
@@ -342,6 +357,7 @@ void MainWindow::ClearMap()
             block[i][j]->changeColor(Qt::white);
             block[i][j]->SetEna(true);
             block[i][j]->AddValue(-1);
+            block[i][j]->marked = false;
             //curMap.Clear();
         }
     }
@@ -400,7 +416,7 @@ void MainWindow::on_restartButton_clicked()
 void MainWindow::on_clearButton_clicked()
 {
     int &&x = curBlock.x(), &&y = curBlock.y();
-    if(!curMap.Original(x, y))
+    if(!curMap.Original(x, y) && processFlag)
     {
         QString tmpStr = block[x][y]->Content();
         block[x][y]->clearBlock();
@@ -418,7 +434,8 @@ void MainWindow::on_startButton_clicked()
 void MainWindow::on_Pause_clicked()
 {
     timer->stop();
-    disconnect(keyboardMapper, SIGNAL(mapped(int)), this, SLOT(KeyPressed(int)));
+    processFlag = false;
+    /*disconnect(keyboardMapper, SIGNAL(mapped(int)), this, SLOT(KeyPressed(int)));
     for(int i = 0; i < 9; i ++)
     {
         for(int j = 0; j < 9; j ++)
@@ -426,13 +443,14 @@ void MainWindow::on_Pause_clicked()
             disconnect(block[i][j], SIGNAL(Chosen(int,int)), this, SLOT(UpdateCurBlock(int,int)));
             disconnect(this, SIGNAL(BlockChosen(int,int,int,char)), block[i][j], SLOT(Highlight(int,int,int,char)));
         }
-    }
+    }*/
 }
 
 void MainWindow::on_Resume_clicked()
 {
     timer->start(1000);
-    connect(keyboardMapper, SIGNAL(mapped(int)), this, SLOT(KeyPressed(int)));
+    processFlag = true;
+    /*connect(keyboardMapper, SIGNAL(mapped(int)), this, SLOT(KeyPressed(int)));
     for(int i = 0; i < 9; i ++)
     {
         for(int j = 0; j < 9; j ++)
@@ -440,43 +458,56 @@ void MainWindow::on_Resume_clicked()
             connect(block[i][j], SIGNAL(Chosen(int,int)), this, SLOT(UpdateCurBlock(int,int)));
             connect(this, SIGNAL(BlockChosen(int,int,int,char)), block[i][j], SLOT(Highlight(int,int,int,char)));
         }
-    }
+    }*/
 }
 
 
 void MainWindow::on_markButton_clicked()
 {
-    int && _x = curBlock.x(), && _y = curBlock.y(), && _n = block[_x][_y]->num();
-    bool flag = block[_x][_y]->marked;
-    block[_x][_y]->marked = !flag;
-    int tmp = block[_x][_y]->num();
-    emit BlockChosen(_x, _y, tmp, HighlightType());
-    PushStep(_x, _y, _n, "mark");
+    if(processFlag)
+    {
+        int && _x = curBlock.x(), && _y = curBlock.y(), && _n = block[_x][_y]->num();
+        bool flag = block[_x][_y]->marked;
+        block[_x][_y]->marked = !flag;
+        int tmp = block[_x][_y]->num();
+        emit BlockChosen(_x, _y, tmp, HighlightType());
+        PushStep(_x, _y, _n, "mark");
+    }
 }
 
 void MainWindow::on_checkRC_clicked(bool checked)
 {
     rcFlag = checked;
-    int tmp = block[curBlock.x()][curBlock.y()]->num();
-    emit BlockChosen(curBlock.x(), curBlock.y(), tmp, HighlightType());
+    int && x = curBlock.x(), && y = curBlock.y();
+    if(x >= 0 && y >= 0)
+    {
+        int tmp = block[curBlock.x()][curBlock.y()]->num();
+        if(processFlag)
+            emit BlockChosen(curBlock.x(), curBlock.y(), tmp, HighlightType());
+    }
 }
 
 void MainWindow::on_checkNum_clicked(bool checked)
 {
     numFlag = checked;
-    int tmp = block[curBlock.x()][curBlock.y()]->num();
-    emit BlockChosen(curBlock.x(), curBlock.y(), tmp, HighlightType());
+    int && x = curBlock.x(), && y = curBlock.y();
+    if(x >= 0 && y >= 0)
+    {
+        int tmp = block[curBlock.x()][curBlock.y()]->num();
+        if(processFlag)
+            emit BlockChosen(curBlock.x(), curBlock.y(), tmp, HighlightType());
+    }
 }
 
 void MainWindow::on_undoButton_clicked()
 {
-    if(!undoArr.empty())
+    if(!undoArr.empty() && processFlag)
         Undo();
 }
 
 void MainWindow::on_redoButton_clicked()
 {
-    if(!redoArr.empty())
+    if(!redoArr.empty() && processFlag)
        Redo();
 }
 

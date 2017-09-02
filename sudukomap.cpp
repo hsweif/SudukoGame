@@ -3,7 +3,11 @@
 SudukoMap::SudukoMap()
 {
     //To check
-    Clear();
+    for(int i = 0; i < 81; i++)
+    {
+        data[i] = -1;
+        original[i] = false;
+    }
 }
 
 int SudukoMap::Data(int x, int y)const

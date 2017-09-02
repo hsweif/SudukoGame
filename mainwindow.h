@@ -16,6 +16,7 @@
 #include <QObject>
 #include <QSignalMapper>
 #include <QTimer>
+#include <QFont>
 #include <QStack>
 #include <QTextStream>
 #include <QFile>
@@ -77,7 +78,7 @@ private:
     Solver *sol;
     SudukoMap curMap;
 
-    bool rcFlag, numFlag;
+    bool rcFlag, numFlag, processFlag;
     void SetupBlocks();
     void PaintLine();
     void KeyboardMapping();

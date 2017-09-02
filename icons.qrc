@@ -1,6 +1,25 @@
 <RCC>
     <qresource prefix="/">
         <file>Resource/clock.png</file>
-        <file>gameMap_1.txt</file>
+        <file>Resource/0.png</file>
+        <file>Resource/1.png</file>
+        <file>Resource/2.png</file>
+        <file>Resource/3.png</file>
+        <file>Resource/4.png</file>
+        <file>Resource/5.png</file>
+        <file>Resource/6.png</file>
+        <file>Resource/7.png</file>
+        <file>Resource/8.png</file>
+        <file>Resource/9.png</file>
+        <file>Resource/Pause.png</file>
+        <file>Resource/play.png</file>
+        <file>Resource/Redo.png</file>
+        <file>Resource/restart.png</file>
+        <file>Resource/resume.png</file>
+        <file>Resource/undo.png</file>
+        <file>Resource/cancel.png</file>
+        <file>Resource/mark.png</file>
+        <file>Resource/clock_2.png</file>
+        <file>Resource/clock_3.png</file>
     </qresource>
 </RCC>

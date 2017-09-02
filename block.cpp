@@ -11,6 +11,13 @@ Block::Block(QWidget *parent)
     blockNum->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     blockNum->installEventFilter(this);
     blockNum->setContextMenuPolicy(Qt::NoContextMenu);
+    /*blockNum->setStyleSheet("QTextBrowser{"
+                            "font: 24pt American Typewriter;"
+                            "border-width: 1px;"
+                            "text-align: center;"
+                            "border-color: rgb(135, 206, 250);"
+                            "background-color: rgb(240, 248, 255);}");*/
+
     marked = false;
     //this->setMouseTracking(true);
     number = -1;
