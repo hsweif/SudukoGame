@@ -354,7 +354,7 @@ void MainWindow::ClearMap()
         for(int j = 0; j < 9; j ++)
         {
             block[i][j]->clearBlock();
-            block[i][j]->changeColor(Qt::white);
+            block[i][j]->changeColor("white");
             block[i][j]->SetEna(true);
             block[i][j]->AddValue(-1);
             block[i][j]->marked = false;
@@ -374,13 +374,14 @@ void MainWindow::FillMap(SudukoMap tmpMap)
             //if(tmpMap.Data(i,j) == -1) {
             if(!tmpMap.Original(i,j)){
                 block[i][j]->SetEna(true);
+                block[i][j]->changeColor("background");
                 //block[i][j]->setValue(-1);
             }
             else
             {
                 //block[i][j]->setValue(tmpMap.Data(i,j));
                 block[i][j]->SetEna(false);
-                block[i][j]->changeColor(Qt::gray);
+                block[i][j]->changeColor("map");
             }
             block[i][j]->AddValue(tmpMap.Data(i,j));
         }

@@ -18,7 +18,7 @@ class Block :public QWidget
 public:
     bool marked;
     Block(QWidget *parent=0);
-    void changeColor(const QColor &color);
+    void changeColor(QString qstr);
     int num()const;
     QPoint getPos();
     void setPos(const QPoint &p);

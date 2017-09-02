@@ -11,12 +11,9 @@ Block::Block(QWidget *parent)
     blockNum->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     blockNum->installEventFilter(this);
     blockNum->setContextMenuPolicy(Qt::NoContextMenu);
-    /*blockNum->setStyleSheet("QTextBrowser{"
+    blockNum->setStyleSheet("QTextBrowser{"
                             "font: 24pt American Typewriter;"
-                            "border-width: 1px;"
-                            "text-align: center;"
-                            "border-color: rgb(135, 206, 250);"
-                            "background-color: rgb(240, 248, 255);}");*/
+                            "background-color: rgb(240, 248, 255);}");
 
     marked = false;
     //this->setMouseTracking(true);
@@ -72,28 +69,28 @@ void Block::SetContent(QString qstr)
 void Block::Highlight(int _x, int _y, int _num, char _type)
 {
     if(marked) {
-        this->changeColor(Qt::green);
+        this->changeColor("mark");
     }
     else if((_type == 'r' || _type == 'b')
           && (p.x() == _x || p.y() == _y))
     {
-        this->changeColor(Qt::yellow);
+        this->changeColor("highlight");
     }
     else if((_type == 'b' || _type == 'n')
             && number == _num && number != -1)
     {
-        this->changeColor(Qt::yellow);
+        this->changeColor("highlight");
     }
     else if(p.x() == _x && p.y() == _y)
     {
-        this->changeColor(Qt::yellow);
+        this->changeColor("highlight");
     }
     else if(!enaFlag)
     {
-        this->changeColor(Qt::gray);
+        this->changeColor("map");
     }
     else{
-        this->changeColor(Qt::white);
+        this->changeColor("background");
     }
 }
 
@@ -158,13 +155,6 @@ void Block::dataChange(const QString &data)
         number=data.toInt();
 }
 
-void Block::changeColor(const QColor &color)
-{
-    QPalette pale;
-    pale.setColor(QPalette::Base,color);
-    blockNum->setPalette(pale);
-}
-
 QPoint Block::getPos()
 {
     return p;
@@ -181,4 +171,32 @@ void Block::setPos(int x, int y)
 void Block::setPos(const QPoint &p)
 {
     this->p=p;
+}
+
+void Block::changeColor(QString qstr)
+{
+    if(qstr == "background")
+    {
+        blockNum->setStyleSheet("QTextBrowser{"
+                                "font: 24pt American Typewriter;"
+                                "background-color: rgb(240, 248, 255);}");
+    }
+    else if(qstr == "mark")
+    {
+        blockNum->setStyleSheet("QTextBrowser{"
+                            "font: 24pt American Typewriter;"
+                            "background-color: rgb(135, 206, 235);}");
+    }
+    else if(qstr == "highlight")
+    {
+        blockNum->setStyleSheet("QTextBrowser{"
+                            "font: 24pt American Typewriter;"
+                            "background-color: rgb(151, 255, 255);}");
+    }
+    else if(qstr == "map")
+    {
+        blockNum->setStyleSheet("QTextBrowser{"
+                            "font: 24pt American Typewriter;"
+                            "background-color: rgb(211, 211, 211);}");
+    }
 }

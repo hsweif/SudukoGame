@@ -16,6 +16,9 @@
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QLabel" name="label">
+     <property name="styleSheet">
+      <string notr="true">font: 24pt &quot;American Typewriter&quot;;</string>
+     </property>
      <property name="text">
       <string>TextLabel</string>
      </property>
@@ -26,6 +29,9 @@
    </item>
    <item>
     <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="styleSheet">
+      <string notr="true">font: 13pt &quot;American Typewriter&quot;;</string>
+     </property>
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
