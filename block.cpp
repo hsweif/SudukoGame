@@ -13,6 +13,7 @@ Block::Block(QWidget *parent)
     blockNum->setContextMenuPolicy(Qt::NoContextMenu);
     blockNum->setStyleSheet("QTextBrowser{"
                             "font: 24pt American Typewriter;"
+                            "text-align: center;"
                             "background-color: rgb(240, 248, 255);}");
 
     marked = false;
@@ -42,13 +43,14 @@ void Block::RemoveTail()
 {
     int tmpSz = content.size();
     content.remove(tmpSz-1, 1);
-    if(content.size() > 2) {
-        font.setPixelSize(18);
+    this->SetFontType(FontPolicy());
+    /*if(content.size() > 2) {
+        SetFontType(1);
     }
     else {
-        font.setPixelSize(30);
-    }
-    blockNum->setFont(font);
+        SetFontType(2);
+    }*/
+    //blockNum->setFont(font);
     blockNum->setText(content);
 }
 
@@ -92,6 +94,7 @@ void Block::Highlight(int _x, int _y, int _num, char _type)
     else{
         this->changeColor("background");
     }
+    this->SetFontType(FontPolicy());
 }
 
 int Block::num()const
@@ -115,13 +118,17 @@ void Block::AddValue(int _num)
     if(_num > 0)
     {
         content.append(QString::number(_num));
-        if(content.size() > 2) {
-            font.setPixelSize(18);
+        /*if(content.size() > 2) {
+            //font.setPixelSize(18);
+            qDebug() << "SetFontType2";
+            this->SetFontType(1);
         }
         else {
-            font.setPixelSize(30);
-        }
-        blockNum->setFont(font);
+            //font.setPixelSize(30);
+            qDebug() << "SetFontType1";
+            this->SetFontType(2);
+        }*/
+        this->SetFontType(FontPolicy());
         blockNum->setText(content);
     }
 }
@@ -146,6 +153,115 @@ void Block::SetEna(bool ok)
     enaFlag = ok;
 }
 
+void Block::SetFontType(int sz)
+{
+     if(sz == 0)
+     {
+        qDebug() << "hi";
+        if(curColor == "background")
+        {
+            blockNum->setStyleSheet("QTextBrowser{"
+                                "font: 12pt American Typewriter;"
+                                "background-color: rgb(240, 248, 255);}");
+
+        }
+        else if(curColor == "mark")
+        {
+            blockNum->setStyleSheet("QTextBrowser{"
+                                "font: 12pt American Typewriter;"
+                                "background-color: rgb(135, 206, 235);}");
+
+        }
+        else if(curColor == "highlight")
+        {
+            blockNum->setStyleSheet("QTextBrowser{"
+                                "font: 12pt American Typewriter;"
+                                "background-color: rgb(151, 255, 255);}");
+
+        }
+        else if(curColor == "map")
+        {
+            blockNum->setStyleSheet("QTextBrowser{"
+                                "font: 12pt American Typewriter;"
+                                "background-color: rgb(211, 211, 211);}");
+
+        }
+    }
+    else if(sz == 1)
+    {
+        qDebug() << "hi";
+        if(curColor == "background")
+        {
+            blockNum->setStyleSheet("QTextBrowser{"
+                                "font: 18pt American Typewriter;"
+                                "background-color: rgb(240, 248, 255);}");
+
+        }
+        else if(curColor == "mark")
+        {
+            blockNum->setStyleSheet("QTextBrowser{"
+                                "font: 18pt American Typewriter;"
+                                "background-color: rgb(135, 206, 235);}");
+
+        }
+        else if(curColor == "highlight")
+        {
+            blockNum->setStyleSheet("QTextBrowser{"
+                                "font: 18pt American Typewriter;"
+                                "background-color: rgb(151, 255, 255);}");
+
+        }
+        else if(curColor == "map")
+        {
+            blockNum->setStyleSheet("QTextBrowser{"
+                                "font: 18pt American Typewriter;"
+                                "background-color: rgb(211, 211, 211);}");
+
+        }
+    }
+    else if(sz == 2)
+    {
+        if(curColor == "background")
+        {
+            blockNum->setStyleSheet("QTextBrowser{"
+                                "font: 30pt American Typewriter;"
+                                "background-color: rgb(240, 248, 255);}");
+
+        }
+        else if(curColor == "mark")
+        {
+            blockNum->setStyleSheet("QTextBrowser{"
+                                "font: 30pt American Typewriter;"
+                                "background-color: rgb(135, 206, 235);}");
+
+        }
+        else if(curColor == "highlight")
+        {
+            blockNum->setStyleSheet("QTextBrowser{"
+                                "font: 30pt American Typewriter;"
+                                "background-color: rgb(151, 255, 255);}");
+
+        }
+        else if(curColor == "map")
+        {
+            blockNum->setStyleSheet("QTextBrowser{"
+                                "font: 30pt American Typewriter;"
+                                "background-color: rgb(211, 211, 211);}");
+
+        }
+    }
+
+}
+
+int Block::FontPolicy()
+{
+    if(content.size() > 6)
+        return 0;
+    else if(content.size() > 2)
+        return 1;
+    else
+        return 2;
+}
 
 void Block::dataChange(const QString &data)
 {
@@ -175,11 +291,12 @@ void Block::setPos(const QPoint &p)
 
 void Block::changeColor(QString qstr)
 {
-    if(qstr == "background")
+    curColor = qstr;
+    /*if(qstr == "background")
     {
         blockNum->setStyleSheet("QTextBrowser{"
-                                "font: 24pt American Typewriter;"
-                                "background-color: rgb(240, 248, 255);}");
+                            "font: 24pt American Typewriter;"
+                            "background-color: rgb(240, 248, 255);}");
     }
     else if(qstr == "mark")
     {
@@ -198,5 +315,5 @@ void Block::changeColor(QString qstr)
         blockNum->setStyleSheet("QTextBrowser{"
                             "font: 24pt American Typewriter;"
                             "background-color: rgb(211, 211, 211);}");
-    }
+    }*/
 }

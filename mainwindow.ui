@@ -454,8 +454,6 @@
      </layout>
     </widget>
    </widget>
-   <zorder>Dial</zorder>
-   <zorder>timer</zorder>
   </widget>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">

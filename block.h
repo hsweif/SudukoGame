@@ -9,6 +9,7 @@
 #include <QMouseEvent>
 #include <QEvent>
 #include <QTextBrowser>
+#include <QString>
 #include <QDebug>
 
 class Block :public QWidget
@@ -31,20 +32,22 @@ public:
     void SetContent(QString);
     QString Content()const;
     bool Enable()const;
+    void SetFontType(int sz);
 private slots:
     void dataChange(const QString & data);
     void Highlight(int, int, int, char);
-
 signals:
     void Chosen(int, int);
 
 private:
     QTextBrowser *blockNum;
     QFont font;
+    QString curColor;
     int number;
     QPoint p;
     bool enaFlag;
     QString content;
+    int FontPolicy();
     void mousePressEvent(QMouseEvent*);
     //void mouseReleaseEvent(QMouseEvent*);
 };
