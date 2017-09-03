@@ -22,5 +22,6 @@
         <file>Resource/clock_2.png</file>
         <file>Resource/clock_3.png</file>
         <file>Resource/money.JPG</file>
+        <file>GameData/game_data.txt</file>
     </qresource>
 </RCC>

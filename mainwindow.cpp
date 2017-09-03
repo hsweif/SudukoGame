@@ -358,6 +358,24 @@ void MainWindow::PushStep(int &x, int &y, int num, QString qstr)
 }
 
 //Todo...there are lots of bugs bug don't know why...
+
+/*void MainWindow::WriteData()
+{
+    QFile file(":/game_data.txt");
+    QTextStream out(&file);
+    out << record.x() << record.y();
+}
+
+void MainWindow::ReadData()
+{
+    int x, y;
+    QFile file(":/game_data.txt");
+    QTextStream in(&file);
+    in >> x >> y;
+    record.setX(x);
+    record.setY(y);
+}*/
+
 /*void MainWindow::ReadData()
 {
     SudukoMap tmpMap;
@@ -515,7 +533,7 @@ void MainWindow::on_restartButton_clicked()
 void MainWindow::on_clearButton_clicked()
 {
     int &&x = curBlock.x(), &&y = curBlock.y();
-    if(x > 0 && y > 0 && !curMap.Original(x, y) && processFlag)
+    if(x >= 0 && y >= 0 && !curMap.Original(x, y) && processFlag)
     {
         QString tmpStr = block[x][y]->Content();
         block[x][y]->clearBlock();
