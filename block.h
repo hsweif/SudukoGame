@@ -19,12 +19,12 @@ class Block :public QWidget
 public:
     bool marked;
     Block(QWidget *parent=0);
-    void changeColor(QString qstr);
+    void ChangeColor(QString qstr);
     int num()const;
-    QPoint getPos();
-    void setPos(const QPoint &p);
-    void setPos(int x,int y);
-    void setValue(int a);
+    //QPoint getPos();
+    //void setPos(const QPoint &p);
+    void SetPos(int x,int y);
+    //void setValue(int a);
     void AddValue(int);
     void SetEna(bool ok);
     void clearBlock();
@@ -35,7 +35,7 @@ public:
     void SetFontType(int sz);
     int FontPolicy();
 private slots:
-    void dataChange(const QString & data);
+    //void dataChange(const QString & data);
     void Highlight(int, int, int, char);
 signals:
     void Chosen(int, int);
@@ -49,7 +49,6 @@ private:
     bool enaFlag;
     QString content;
     void mousePressEvent(QMouseEvent*);
-    //void mouseReleaseEvent(QMouseEvent*);
 };
 
 #endif // BLOCK_H

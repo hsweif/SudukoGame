@@ -15,14 +15,11 @@ Block::Block(QWidget *parent)
                             "font: 24pt American Typewriter;"
                             "text-align: center;"
                             "background-color: rgb(237, 234, 208);}");
-
     marked = false;
-    //this->setMouseTracking(true);
     number = -1;
     enaFlag = true;
 }
 
-//Mac 上用左键选取会有种迷之bug。。。
 void Block::mousePressEvent(QMouseEvent *event)
 {
     if(event->buttons() == Qt::RightButton) {
@@ -44,13 +41,6 @@ void Block::RemoveTail()
     int tmpSz = content.size();
     content.remove(tmpSz-1, 1);
     this->SetFontType(FontPolicy());
-    /*if(content.size() > 2) {
-        SetFontType(1);
-    }
-    else {
-        SetFontType(2);
-    }*/
-    //blockNum->setFont(font);
     blockNum->setText(content);
 }
 
@@ -60,39 +50,31 @@ void Block::SetContent(QString qstr)
     blockNum->setText(content);
 }
 
-/*void Block::mouseReleaseEvent(QMouseEvent *event)
-{
-    if(event->buttons() == Qt::LeftButton) {
-        qDebug() << "Left";
-        emit Chosen(this->p.x(), this->p.y());
-    }
-}*/
-
 void Block::Highlight(int _x, int _y, int _num, char _type)
 {
     if(marked) {
-        this->changeColor("mark");
+        this->ChangeColor("mark");
     }
     else if((_type == 'r' || _type == 'b')
           && (p.x() == _x || p.y() == _y))
     {
-        this->changeColor("highlight");
+        this->ChangeColor("highlight");
     }
     else if((_type == 'b' || _type == 'n')
             && number == _num && number != -1)
     {
-        this->changeColor("highlight");
+        this->ChangeColor("highlight");
     }
     else if(p.x() == _x && p.y() == _y)
     {
-        this->changeColor("highlight");
+        this->ChangeColor("highlight");
     }
     else if(!enaFlag)
     {
-        this->changeColor("map");
+        this->ChangeColor("map");
     }
     else{
-        this->changeColor("background");
+        this->ChangeColor("background");
     }
     this->SetFontType(FontPolicy());
 }
@@ -105,7 +87,6 @@ int Block::num()const
 void Block::clearBlock()
 {
     content.clear();
-    //qDebug() << "block size: " << content.size();
     blockNum->setText("");
     number = -1;
 }
@@ -118,22 +99,12 @@ void Block::AddValue(int _num)
     if(_num > 0)
     {
         content.append(QString::number(_num));
-        /*if(content.size() > 2) {
-            //font.setPixelSize(18);
-            qDebug() << "SetFontType2";
-            this->SetFontType(1);
-        }
-        else {
-            //font.setPixelSize(30);
-            qDebug() << "SetFontType1";
-            this->SetFontType(2);
-        }*/
         this->SetFontType(FontPolicy());
         blockNum->setText(content);
     }
 }
 
-void Block::setValue(int a)
+/*void Block::setValue(int a)
 {
     if(a<1)
     {
@@ -146,7 +117,7 @@ void Block::setValue(int a)
         number =a;
     }
 
-}
+}*/
 
 void Block::SetEna(bool ok)
 {
@@ -157,7 +128,6 @@ void Block::SetFontType(int sz)
 {
      if(sz == 0)
      {
-        qDebug() << "hi";
         if(curColor == "background")
         {
             blockNum->setStyleSheet("QTextBrowser{"
@@ -189,7 +159,6 @@ void Block::SetFontType(int sz)
     }
     else if(sz == 1)
     {
-        qDebug() << "hi";
         if(curColor == "background")
         {
             blockNum->setStyleSheet("QTextBrowser{"
@@ -263,20 +232,20 @@ int Block::FontPolicy()
         return 2;
 }
 
-void Block::dataChange(const QString &data)
+/*void Block::dataChange(const QString &data)
 {
     if(data.isEmpty())
         number=-1;
     else
         number=data.toInt();
-}
+}*/
 
-QPoint Block::getPos()
+/*QPoint Block::getPos()
 {
     return p;
-}
+}*/
 
-void Block::setPos(int x, int y)
+void Block::SetPos(int x, int y)
 {
     QPoint point;
     point.setX(x);
@@ -284,36 +253,12 @@ void Block::setPos(int x, int y)
     this->p=point;
 }
 
-void Block::setPos(const QPoint &p)
+/*void Block::SetPos(const QPoint &p)
 {
     this->p=p;
-}
+}*/
 
-void Block::changeColor(QString qstr)
+void Block::ChangeColor(QString qstr)
 {
     curColor = qstr;
-    /*if(qstr == "background")
-    {
-        blockNum->setStyleSheet("QTextBrowser{"
-                            "font: 24pt American Typewriter;"
-                            "background-color: rgb(240, 248, 255);}");
-    }
-    else if(qstr == "mark")
-    {
-        blockNum->setStyleSheet("QTextBrowser{"
-                            "font: 24pt American Typewriter;"
-                            "background-color: rgb(135, 206, 235);}");
-    }
-    else if(qstr == "highlight")
-    {
-        blockNum->setStyleSheet("QTextBrowser{"
-                            "font: 24pt American Typewriter;"
-                            "background-color: rgb(151, 255, 255);}");
-    }
-    else if(qstr == "map")
-    {
-        blockNum->setStyleSheet("QTextBrowser{"
-                            "font: 24pt American Typewriter;"
-                            "background-color: rgb(211, 211, 211);}");
-    }*/
 }

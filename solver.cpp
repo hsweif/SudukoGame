@@ -10,13 +10,11 @@ SudukoMap Solver::Solve(SudukoMap mp)
     ansMap.Clear();
     Init();
     DFS(0,0);
-    //qDebug() << "hi";
     return ansMap;
 }
 
 void Solver::Init()
 {
-    //qDebug() << "init...";
     for(int i = 0 ; i < 9; i ++)
     {
         for(int j = 1; j <= 9; j ++)
@@ -43,7 +41,6 @@ void Solver::Init()
 
 int Solver::Area(int x, int y)
 {
-    //跟下面初始化的开始结束数字要一致。。。。。。
     return (int)(x/3)*3 + (int)(y/3);
 }
 
@@ -61,6 +58,13 @@ bool Solver::Fill(int x, int y, int k)
     }
 }
 
+/**
+ * @brief Solver::Check
+ * @param mp
+ * @return
+ * 检查地图mp是否是填充完的合法地图
+ * 用在游戏结果的判定
+ */
 bool Solver::Check(SudukoMap mp)
 {
     for(int i = 0; i < 9; i ++)
@@ -98,11 +102,17 @@ void Solver::Delete(int x, int y, int k)
     todoMap.SetData(x, y, -1);
 }
 
+/**
+ * @brief Solver::DFS
+ * @param x
+ * @param y
+ * 简单暴力的DFS，据说对搜索序预处理可以大幅提高搜索效率
+ * 然而并未实现，通过虚函数的声明可在子类里优化DFS
+ */
 void Solver::DFS(int x, int y)
 {
     if(x == 9 && y == 0)
     {
-        //qDebug() << "solved";
         ansMap = todoMap;
         return;
     }
@@ -123,6 +133,17 @@ void Solver::DFS(int x, int y)
     }
 }
 
+/**
+ * @brief Solver::GenerateMap
+ * @param level
+ * @return
+ * 地图生成函数，把个别的初始化操作封装起来提供一个统一的接口返回生成的地图
+ * 具体生成方式是先随机生成中间的九宫格的数字
+ * 然后通过交换次序来构造四角与十字的九宫格，如此则保证地图合法
+ * 最后通过随机挖去若干个空格来设定难度，
+ * 不保证解唯一然而由格子的数量可以预期足够多的生成地图是唯一解的
+ * 由于DFS尚未优化，因此返回前并不特别进行唯一性的验证。
+ */
 SudukoMap Solver::GenerateMap(int level)
 {
     outputMap.Clear();

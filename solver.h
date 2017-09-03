@@ -11,26 +11,32 @@
 class Solver
 {
 public:
+    /**
+     * 求解器的公有成员主要为主视窗中sol会调用的函数
+     * 即为地图的生成与求解。
+     */
     Solver();
-    SudukoMap Solve(SudukoMap);
-    bool Check(SudukoMap mp);
+    virtual SudukoMap Solve(SudukoMap);
     SudukoMap GenerateMap(int level);
+    bool Check(SudukoMap mp);
 
-private:
-    SudukoMap todoMap, ansMap, outputMap;
-    void DFS(int x, int y);
-    bool col[9][10], row[9][10], block[9][10];
-    int Area(int x, int y);
+protected:
+    int Area(int x, int y);//判断(x,y)属于哪一个小九宫格
     bool Fill(int x, int y, int k);
     void Delete(int x, int y, int k);
-    void Init();
     /**
      * 以下是数独生成器的相关函数
+     * 通过虚函数的生命可以在子类实现不同的初始化方式
+     * 以及改进搜索的效率
      */
+    virtual void CornerInit();
+    virtual void CenterInit();
+    virtual void CrossInit();
+    virtual void DFS(int x, int y);
+    void Init();
+    SudukoMap todoMap, ansMap, outputMap;
+    bool col[9][10], row[9][10], block[9][10];
     std::vector <int> srcArr;
-    void CornerInit();
-    void CenterInit();
-    void CrossInit();
     int count;
 };
 

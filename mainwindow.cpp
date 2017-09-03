@@ -5,20 +5,18 @@ MainWindow::MainWindow(QWidget *parent):
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
+    /*
+     *	UI界面的初始化配置，混用UI Designer和代码控制
+     * 	包括排版、选单以及部分控件的配置
+     */
     ui->setupUi(this);
     frame = new QFrame(this);
     QHBoxLayout *hLayout = new QHBoxLayout;
     SetupBlocks();
     PaintLine();
     SetupMenu();
-    //ReadData();
-    /*
-     *	UI界面的初始化配置，混用UI Designer和代码控制
-     * 	包括一些排版以及选单的配置
-     */
     KeyboardMapping();
     hLayout->addWidget(frame);
-    //hLayout->addLayout(ui->Dial);
     hLayout->addWidget(ui->Dial);
     setLayout(hLayout);
     this->setFixedSize(frame->width()+250,frame->height());
@@ -29,38 +27,37 @@ MainWindow::MainWindow(QWidget *parent):
     ui->levelBox->addItem("白金");
     ui->levelBox->addItem("钻石");
     ui->levelBox->addItem("数独大师");
-    /*QFont font;
-    font.setPixelSize(20);
-    ui->second->setFont(font);
-    ui->minute->setFont(font);
-    ui->dot->setFont(font);*/
-    //ui->centralWidget->setMouseTracking(true);
     /*
-     * 计时器的初始化设置
+     *	游戏信息的初始化以及指针的实例化
      */
     timer = new QTimer(this);
     timer->setInterval(1000);
-    connect(timer, SIGNAL(timeout()), this, SLOT(UpdateTime()));
     curMin = 0; curSec = 0;
-    /*
-     * 其他数据成员的初始化区域
-     */
     rcFlag = false; numFlag = false;
-    curBlock.setX(-1);
+    curBlock.setX(-1);//有效坐标必非负，以此避免非法操作
     curBlock.setY(-1);
-    sol = new Solver;
-    infobox = new InfoBox;
     processFlag = true;
     curMap.Clear();
     gameMode = 1;
     startFlag = false;
+    sol = new Solver;
+    infobox = new InfoBox;
     /*
      *	信号与槽的连接区
      */
+    connect(timer, SIGNAL(timeout()), this, SLOT(UpdateTime()));
     connect(this, SIGNAL(Check()), this, SLOT(CheckResult()));
     SetGame();
 }
 
+/**
+ * @brief MainWindow::SetupMenu
+ * (选单操作设置区)
+ * 这是一个虚函数，以利子类重写重新定制需要的操作选单
+ * 放置在选单区的操作具备以下特点：
+ * 1. 在游戏进程里不会时常使用，例如模式切换
+ * 2. 特意放置在不起眼处的一键解题功能
+ */
 void MainWindow::SetupMenu()
 {
     operaMenu=new QMenu(tr("操作选单(&O)"),this);
@@ -71,7 +68,6 @@ void MainWindow::SetupMenu()
     operaMenu->addAction(playAction);
 
     runAction=new QAction(tr("解题模式"),this);
-    //runAction->setStatusTip("计算数独解法");
     connect(runAction,SIGNAL(triggered()),this,SLOT(SolveMode()));
     operaMenu->addAction(runAction);
 
@@ -100,6 +96,13 @@ void MainWindow::SetupMenu()
     helpMenu->addAction(aboutAction);
 }
 
+/**
+ * @brief MainWindow::SolveMode
+ * @brief MainWindow::PlayMode
+ * @brief MainWindow::VainMode
+ * 这三个函数主要通过gameMode的判定来决定当前是何种游戏模式
+ * 以进行不同的操作
+ */
 void MainWindow::SolveMode()
 {
     TimerRestart();
@@ -164,6 +167,12 @@ void MainWindow::UpdateTime()
     ui->second->setText(tmpS);
 }
 
+/**
+ * @brief MainWindow::SetupBlocks
+ * 这是九宫格设置函数，
+ * 主要考量到Ui Designer在处理大量重复控件时的效率不及代码，
+ * block[][]是自定义数据结构Block的二维数组
+ */
 void MainWindow::SetupBlocks()
 {
     for(int i = 0; i < 9; i ++)
@@ -171,8 +180,9 @@ void MainWindow::SetupBlocks()
         for(int j = 0; j < 9; j ++)
         {
             block[i][j] = new Block(frame);
-            block[i][j]->setPos(i,j);
+            block[i][j]->SetPos(i,j);
             block[i][j]->move(j*50, i*50);
+            //通过this的信号与槽的转接连接每个方格和全局的操作
             connect(block[i][j], SIGNAL(Chosen(int,int)), this, SLOT(UpdateCurBlock(int,int)));
             connect(this, SIGNAL(BlockChosen(int,int,int,char)), block[i][j], SLOT(Highlight(int,int,int,char)));
         }
@@ -181,6 +191,10 @@ void MainWindow::SetupBlocks()
     frame->setMinimumSize(width, width);
 }
 
+/**
+ * @brief MainWindow::KeyboardMapping
+ * 键盘映射函数，通过QSignalMapper建立按键区与数字的对应关系
+ */
 void MainWindow::KeyboardMapping()
 {
     keyboardMapper = new QSignalMapper(this);
@@ -205,6 +219,13 @@ void MainWindow::KeyboardMapping()
     connect(keyboardMapper, SIGNAL(mapped(int)), this, SLOT(KeyPressed(int)));
 }
 
+/**
+ * @brief MainWindow::KeyPressed
+ * @param num
+ * 连接个别方格和全局操作的中介槽函数
+ * 每在有状态更新的时候发射信号
+ * (当pause的时候不发射信号，通过processFlag判断）
+ */
 void MainWindow::KeyPressed(int num)
 {
     int && _x = curBlock.x(), && _y = curBlock.y();
@@ -220,10 +241,16 @@ void MainWindow::KeyPressed(int num)
         emit Check();
         emit BlockChosen(_x, _y, num, HighlightType());
     }
-    //CheckCurBlock();
 }
 
-//Todo...
+/**
+ * @brief MainWindow::Undo
+ * @brief MainWindow::Redo
+ * Undo 的操作是后进先出，于是使用Stack储存每个操作
+ * Pop出来的丢到redoArr里面（同样是个Stack）
+ * 当有新操作时清空RedoArr，如此便可实现若干步的还原与撤销
+ * 通过约定的字符串与坐标定义各个操作
+ */
 void MainWindow::Undo()
 {
     Step *tmp = undoArr.pop();
@@ -273,6 +300,16 @@ void MainWindow::Redo()
     emit BlockChosen(_x, _y, block[_x][_y]->num(), HighlightType());
 }
 
+void MainWindow::PushStep(int &x, int &y, int num, QString qstr)
+{
+    Step *tmpStep = new Step;
+    tmpStep->SetInstruct(qstr);
+    tmpStep->SetPos(x, y);
+    tmpStep->SetValue(num);
+    undoArr.push(tmpStep);
+    redoArr.clear();
+}
+
 void MainWindow::UpdateCurBlock(int _x, int _y)
 {
     curBlock.setX(_x);
@@ -306,6 +343,10 @@ char MainWindow::HighlightType()
     }
 }
 
+/**
+ * @brief MainWindow::CheckResult
+ * 胜利状态检查函数
+ */
 void MainWindow::CheckResult()
 {
     SudukoMap curM = CurrentState();
@@ -345,101 +386,24 @@ void MainWindow::PaintLine()
     }
 }
 
-
-void MainWindow::PushStep(int &x, int &y, int num, QString qstr)
-{
-    //不知道为啥得用指针
-    Step *tmpStep = new Step;
-    tmpStep->SetInstruct(qstr);
-    tmpStep->SetPos(x, y);
-    tmpStep->SetValue(num);
-    undoArr.push(tmpStep);
-    redoArr.clear();
-}
-
-//Todo...there are lots of bugs bug don't know why...
-
-/*void MainWindow::WriteData()
-{
-    QFile file(":/game_data.txt");
-    QTextStream out(&file);
-    out << record.x() << record.y();
-}
-
-void MainWindow::ReadData()
-{
-    int x, y;
-    QFile file(":/game_data.txt");
-    QTextStream in(&file);
-    in >> x >> y;
-    record.setX(x);
-    record.setY(y);
-}*/
-
-/*void MainWindow::ReadData()
-{
-    SudukoMap tmpMap;
-    QFile file(":/gameMap_1.txt");
-    QTextStream in(&file);
-    QString tmpstr;
-    if(!file.open(QIODevice::ReadOnly)) {
-        qDebug()<<"Can't open the file!";
-    }
-    while(!in.atEnd())
-    {
-        tmpMap.Clear();
-        for(int t = 0; t < 9; t++)
-        {
-            int count = 0;
-            tmpstr = in.readLine();
-            //qDebug() << tmpstr;
-            for(int i = 0; i < tmpstr.size(); i++)
-            {
-               if(count >= 9)
-                   break;
-               if(tmpstr[i] == ' ')
-                   continue;
-               if(tmpstr[i] == '_')
-               {
-                   tmpMap.SetData(t, count, -1);
-                   tmpMap.SetOriginal(t, count, false);
-                   count ++;
-               }
-               else {
-                   std::string stdstr = tmpstr.toStdString();
-                   int tmpNum = stdstr[i] - '0';
-                   //qDebug() << tmpNum;
-                   tmpMap.SetData(t, count, tmpNum);
-                   tmpMap.SetOriginal(t, count, true);
-                   count ++;
-               }
-            }
-        }
-        gameData.push_back(tmpMap);
-        for(int i = 0; i < 3; i++)//读取分割线与空白
-            tmpstr = in.readLine();
-     }
-    file.close();
-}*/
-
-//Test, to do...
+/**
+ * @brief MainWindow::SetGame
+ * 往求解器里面丢参数得到不同难易度的地图并设置
+ */
 void MainWindow::SetGame()
 {
-    /*int sz = gameData.size();
-    int randNum = rand() % sz;
-    if(!gameData.empty())
-    {
-        curMap = gameData[randNum];
-        FillMap(curMap);
-    }*/
     startFlag = true;
     int level = ui->levelBox->currentIndex() + 1;
-    //qDebug() << level;
     ClearMap();
     curMap = sol->GenerateMap(level);
     FillMap(curMap);
 }
 
+/**
+ * @brief MainWindow::CurrentMap
+ * @brief MainWindow::CurrentState
+ * Map 是返回当前的地图设置, State是返回包括用户填写数字的全部状态
+ */
 SudukoMap MainWindow::CurrentMap()
 {
     return curMap;
@@ -466,35 +430,30 @@ void MainWindow::ClearMap()
         for(int j = 0; j < 9; j ++)
         {
             block[i][j]->clearBlock();
-            block[i][j]->changeColor("background");
+            block[i][j]->ChangeColor("background");
             block[i][j]->SetFontType(block[i][j]->FontPolicy());
             block[i][j]->SetEna(true);
             block[i][j]->AddValue(-1);
             block[i][j]->marked = false;
-            //curMap.Clear();
         }
     }
 }
 
 void MainWindow::FillMap(SudukoMap tmpMap)
 {
-    //qDebug() << "fill map";
     ClearMap();
     for(int i = 0; i < 9; i ++)
     {
         for(int j = 0; j < 9; j++)
         {
-            //if(tmpMap.Data(i,j) == -1) {
             if(!tmpMap.Original(i,j)){
                 block[i][j]->SetEna(true);
-                block[i][j]->changeColor("background");
-                //block[i][j]->setValue(-1);
+                block[i][j]->ChangeColor("background");
             }
             else
             {
-                //block[i][j]->setValue(tmpMap.Data(i,j));
                 block[i][j]->SetEna(false);
-                block[i][j]->changeColor("map");
+                block[i][j]->ChangeColor("map");
             }
             block[i][j]->AddValue(tmpMap.Data(i,j));
         }
@@ -525,9 +484,9 @@ void MainWindow::on_restartButton_clicked()
     if(startFlag)
     {
         TimerRestart();
+        processFlag = true;
         FillMap(curMap);
     }
-    //curMap.Clear();
 }
 
 void MainWindow::on_clearButton_clicked()
@@ -545,6 +504,7 @@ void MainWindow::on_clearButton_clicked()
 void MainWindow::on_startButton_clicked()
 {
     TimerRestart();
+    processFlag = true;
     SetGame();
 }
 
@@ -555,15 +515,6 @@ void MainWindow::on_Pause_clicked()
         timer->stop();
         processFlag = false;
     }
-    /*disconnect(keyboardMapper, SIGNAL(mapped(int)), this, SLOT(KeyPressed(int)));
-    for(int i = 0; i < 9; i ++)
-    {
-        for(int j = 0; j < 9; j ++)
-        {
-            disconnect(block[i][j], SIGNAL(Chosen(int,int)), this, SLOT(UpdateCurBlock(int,int)));
-            disconnect(this, SIGNAL(BlockChosen(int,int,int,char)), block[i][j], SLOT(Highlight(int,int,int,char)));
-        }
-    }*/
 }
 
 void MainWindow::on_Resume_clicked()
@@ -573,15 +524,6 @@ void MainWindow::on_Resume_clicked()
         timer->start(1000);
         processFlag = true;
     }
-    /*connect(keyboardMapper, SIGNAL(mapped(int)), this, SLOT(KeyPressed(int)));
-    for(int i = 0; i < 9; i ++)
-    {
-        for(int j = 0; j < 9; j ++)
-        {
-            connect(block[i][j], SIGNAL(Chosen(int,int)), this, SLOT(UpdateCurBlock(int,int)));
-            connect(this, SIGNAL(BlockChosen(int,int,int,char)), block[i][j], SLOT(Highlight(int,int,int,char)));
-        }
-    }*/
 }
 
 
@@ -634,6 +576,10 @@ void MainWindow::on_redoButton_clicked()
        Redo();
 }
 
+/**
+ * @brief MainWindow::SolveGame
+ * 通过求解器的求解功能返回答案地图并设置
+ */
 void MainWindow::SolveGame()
 {
     SudukoMap tmpMap;
