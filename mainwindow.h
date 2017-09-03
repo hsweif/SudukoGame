@@ -45,6 +45,11 @@ private slots:
     void KeyPressed(int);
     void UpdateTime();
     void CheckResult();
+    void ClearMap();
+    void SolveGame();
+    void SolveMode();
+    void PlayMode();
+    void VainGame();
     /*
      *	Ui Designer生成的槽函数
      */
@@ -58,7 +63,6 @@ private slots:
     void on_checkNum_clicked(bool checked);
     void on_undoButton_clicked();
     void on_redoButton_clicked();
-    void on_solveButton_clicked();
 
 signals:
     void BlockChosen(int,int,int,char);
@@ -71,20 +75,29 @@ private:
     QSignalMapper *keyboardMapper;
     QTimer *timer;
     QStack <Step*> undoArr, redoArr;
+    QAction *runAction;
+    QAction *playAction;
+    QAction *quitAction;
+    QAction *solveAction;
+    QAction *vainAction;
+    QMenu *operaMenu;
+    QMenu *helpMenu;
+    QAction *aboutAction;
     //QVector <SudukoMap> gameData;
     int curSec, curMin;
     Block *block[9][9];
     InfoBox *infobox;
     Solver *sol;
     SudukoMap curMap;
-
+    bool startFlag;
+    int gameMode; //1 - game, 0 - solve
     bool rcFlag, numFlag, processFlag;
     void SetupBlocks();
     void PaintLine();
     void KeyboardMapping();
+    void SetupMenu();
     void Undo();
     void Redo();
-    void ClearMap();
     void TimerRestart();
     //void ReadData();
     void SetGame();

@@ -33,6 +33,7 @@ public:
     QString Content()const;
     bool Enable()const;
     void SetFontType(int sz);
+    int FontPolicy();
 private slots:
     void dataChange(const QString & data);
     void Highlight(int, int, int, char);
@@ -47,7 +48,6 @@ private:
     QPoint p;
     bool enaFlag;
     QString content;
-    int FontPolicy();
     void mousePressEvent(QMouseEvent*);
     //void mouseReleaseEvent(QMouseEvent*);
 };

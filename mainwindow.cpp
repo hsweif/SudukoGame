@@ -10,6 +10,7 @@ MainWindow::MainWindow(QWidget *parent):
     QHBoxLayout *hLayout = new QHBoxLayout;
     SetupBlocks();
     PaintLine();
+    SetupMenu();
     //ReadData();
     /*
      *	UI界面的初始化配置，混用UI Designer和代码控制
@@ -21,12 +22,13 @@ MainWindow::MainWindow(QWidget *parent):
     hLayout->addWidget(ui->Dial);
     setLayout(hLayout);
     this->setFixedSize(frame->width()+250,frame->height());
-    this->setWindowTitle("Suduko Game!");
-    ui->levelBox->addItem("Beginner");
-    ui->levelBox->addItem("Easy");
-    ui->levelBox->addItem("Normal");
-    ui->levelBox->addItem("Hard");
-    ui->levelBox->addItem("Master");
+    this->setWindowTitle("数独俱乐部入会测试");
+    ui->levelBox->addItem("青铜");
+    ui->levelBox->addItem("白银");
+    ui->levelBox->addItem("黄金");
+    ui->levelBox->addItem("白金");
+    ui->levelBox->addItem("钻石");
+    ui->levelBox->addItem("数独大师");
     /*QFont font;
     font.setPixelSize(20);
     ui->second->setFont(font);
@@ -49,10 +51,94 @@ MainWindow::MainWindow(QWidget *parent):
     sol = new Solver;
     infobox = new InfoBox;
     processFlag = true;
+    curMap.Clear();
+    gameMode = 1;
+    startFlag = false;
     /*
      *	信号与槽的连接区
      */
     connect(this, SIGNAL(Check()), this, SLOT(CheckResult()));
+    SetGame();
+}
+
+void MainWindow::SetupMenu()
+{
+    operaMenu=new QMenu(tr("操作选单(&O)"),this);
+    ui->menuBar->addMenu(operaMenu);
+
+    playAction = new QAction(tr("玩耍模式"), this);
+    connect(playAction,SIGNAL(triggered()),this,SLOT(PlayMode()));
+    operaMenu->addAction(playAction);
+
+    runAction=new QAction(tr("解题模式"),this);
+    //runAction->setStatusTip("计算数独解法");
+    connect(runAction,SIGNAL(triggered()),this,SLOT(SolveMode()));
+    operaMenu->addAction(runAction);
+
+    solveAction = new QAction(tr("VIP一键搞定"), this);
+    solveAction->setShortcut(tr("Ctrl+r"));
+    connect(solveAction,SIGNAL(triggered()),this,SLOT(SolveGame()));
+    operaMenu->addAction(solveAction);
+
+    vainAction = new QAction(tr("VIP虚荣模式"));
+    vainAction->setShortcut(tr("Ctrl+v"));
+    connect(vainAction,SIGNAL(triggered()),this,SLOT(VainGame()));
+    operaMenu->addAction(vainAction);
+
+    quitAction=new QAction(tr("退出"),this);
+    quitAction->setShortcut(tr("ctrl+q"));
+    quitAction->setStatusTip("退出程序");
+    connect(quitAction,SIGNAL(triggered()),this,SLOT(close()));
+    operaMenu->addAction(quitAction);
+
+    helpMenu=new QMenu(tr("帮助(&H)"),this);
+    ui->menuBar->addMenu(helpMenu);
+    aboutAction=new QAction(tr("关于"),this);
+    aboutAction->setShortcut(tr("Ctrl+I"));
+    aboutAction->setStatusTip("关于数独计算器");
+    connect(aboutAction,SIGNAL(triggered()),this,SLOT(about()));
+    helpMenu->addAction(aboutAction);
+}
+
+void MainWindow::SolveMode()
+{
+    TimerRestart();
+    timer->stop();
+    gameMode = 0;
+    this->ClearMap();
+    ui->startButton->setText("求解");
+}
+
+void MainWindow::PlayMode()
+{
+    TimerRestart();
+    gameMode = 1;
+    this->SetGame();
+    ui->startButton->setText("开始");
+}
+
+void MainWindow::VainGame()
+{
+    bool flag = false;
+    if(gameMode)
+    {
+        SolveGame();
+        for(int i = 0; i < 9; i++)
+        {
+            if(flag)
+                break;
+            for(int j = 0; j < 9; j++)
+            {
+                if(!curMap.Original(i,j))
+                {
+                    if(flag)
+                        break;
+                    block[i][j]->clearBlock();
+                    flag = true;
+                }
+            }
+        }
+    }
 }
 
 void MainWindow::UpdateTime()
@@ -125,6 +211,9 @@ void MainWindow::KeyPressed(int num)
     if(processFlag)
     {
         if(_x >= 0 && _y >= 0 && !curMap.Original(_x, _y)) {
+            block[_x][_y]->AddValue(num);
+        }
+        else if(curMap.BlankMap()) {
             block[_x][_y]->AddValue(num);
         }
         PushStep(_x, _y, num, "click");
@@ -222,9 +311,10 @@ void MainWindow::CheckResult()
     SudukoMap curM = CurrentState();
     if(sol->Check(curM))
     {
-        this->infobox->setWindowTitle("Hi, genius");
-        this->infobox->SetText("You win the game!");
+        this->infobox->setWindowTitle("欢迎您加入数独大师俱乐部");
+        this->infobox->SetText("太厉害了！您已经赢得这场游戏，获得加入数独大师俱乐部的资格，扫码输入验证码233即可入会！");
         this->infobox->show();
+        timer->stop();
     }
 }
 
@@ -324,6 +414,7 @@ void MainWindow::SetGame()
         curMap = gameData[randNum];
         FillMap(curMap);
     }*/
+    startFlag = true;
     int level = ui->levelBox->currentIndex() + 1;
     //qDebug() << level;
     ClearMap();
@@ -341,7 +432,10 @@ SudukoMap MainWindow::CurrentState()
     SudukoMap tmp;
     for(int i = 0; i < 9; i ++)
         for(int j = 0; j < 9; j++)
+        {
             tmp.SetData(i, j, block[i][j]->num());
+            tmp.SetOriginal(i, j, true);
+        }
     return tmp;
 }
 
@@ -354,7 +448,8 @@ void MainWindow::ClearMap()
         for(int j = 0; j < 9; j ++)
         {
             block[i][j]->clearBlock();
-            block[i][j]->changeColor("white");
+            block[i][j]->changeColor("background");
+            block[i][j]->SetFontType(block[i][j]->FontPolicy());
             block[i][j]->SetEna(true);
             block[i][j]->AddValue(-1);
             block[i][j]->marked = false;
@@ -409,15 +504,18 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_restartButton_clicked()
 {
-    TimerRestart();
-    FillMap(curMap);
+    if(startFlag)
+    {
+        TimerRestart();
+        FillMap(curMap);
+    }
     //curMap.Clear();
 }
 
 void MainWindow::on_clearButton_clicked()
 {
     int &&x = curBlock.x(), &&y = curBlock.y();
-    if(!curMap.Original(x, y) && processFlag)
+    if(x > 0 && y > 0 && !curMap.Original(x, y) && processFlag)
     {
         QString tmpStr = block[x][y]->Content();
         block[x][y]->clearBlock();
@@ -434,8 +532,11 @@ void MainWindow::on_startButton_clicked()
 
 void MainWindow::on_Pause_clicked()
 {
-    timer->stop();
-    processFlag = false;
+    if(startFlag)
+    {
+        timer->stop();
+        processFlag = false;
+    }
     /*disconnect(keyboardMapper, SIGNAL(mapped(int)), this, SLOT(KeyPressed(int)));
     for(int i = 0; i < 9; i ++)
     {
@@ -449,8 +550,11 @@ void MainWindow::on_Pause_clicked()
 
 void MainWindow::on_Resume_clicked()
 {
-    timer->start(1000);
-    processFlag = true;
+    if(startFlag)
+    {
+        timer->start(1000);
+        processFlag = true;
+    }
     /*connect(keyboardMapper, SIGNAL(mapped(int)), this, SLOT(KeyPressed(int)));
     for(int i = 0; i < 9; i ++)
     {
@@ -512,10 +616,25 @@ void MainWindow::on_redoButton_clicked()
        Redo();
 }
 
-void MainWindow::on_solveButton_clicked()
+void MainWindow::SolveGame()
 {
-    //qDebug() << "solving";
-    SudukoMap tmpMap, curMap = CurrentMap();
-    tmpMap = sol->Solve(curMap);
-    FillMap(tmpMap);
+    SudukoMap tmpMap;
+    if(gameMode)
+    {
+        if(!curMap.BlankMap())
+        {
+            tmpMap = sol->Solve(curMap);
+            FillMap(tmpMap);
+        }
+    }
+    else
+    {
+        SudukoMap ans, tmp = CurrentState();
+        ans = sol->Solve(tmp);
+        FillMap(tmpMap);
+    }
+    this->infobox->setWindowTitle("已使用VIP功能");
+    this->infobox->SetText("您好，您方才试用的是高级会员的专属功能。扫码输入666即可获得往后测试功能的优先试用权！");
+    this->infobox->show();
+    timer->stop();
 }

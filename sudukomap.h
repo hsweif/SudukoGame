@@ -10,6 +10,7 @@ public:
     void Clear();
     bool Original(int x, int y);
     void SetOriginal(int x, int y, bool flag);
+    bool BlankMap();
 
 private:
     int data[81];

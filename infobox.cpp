@@ -17,3 +17,8 @@ void InfoBox::SetText(QString qstr)
 {
     ui->label->setText(qstr);
 }
+
+void InfoBox::on_pushButton_clicked()
+{
+    this->close();
+}

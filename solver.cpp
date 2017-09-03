@@ -7,6 +7,7 @@ Solver::Solver()
 SudukoMap Solver::Solve(SudukoMap mp)
 {
     todoMap = mp;
+    ansMap.Clear();
     Init();
     DFS(0,0);
     //qDebug() << "hi";

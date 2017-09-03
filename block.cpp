@@ -14,7 +14,7 @@ Block::Block(QWidget *parent)
     blockNum->setStyleSheet("QTextBrowser{"
                             "font: 24pt American Typewriter;"
                             "text-align: center;"
-                            "background-color: rgb(240, 248, 255);}");
+                            "background-color: rgb(237, 234, 208);}");
 
     marked = false;
     //this->setMouseTracking(true);
@@ -162,21 +162,21 @@ void Block::SetFontType(int sz)
         {
             blockNum->setStyleSheet("QTextBrowser{"
                                 "font: 12pt American Typewriter;"
-                                "background-color: rgb(240, 248, 255);}");
+                                "background-color: rgb(237, 234, 208);}");
 
         }
         else if(curColor == "mark")
         {
             blockNum->setStyleSheet("QTextBrowser{"
                                 "font: 12pt American Typewriter;"
-                                "background-color: rgb(135, 206, 235);}");
+                                "background-color: rgb(255, 207, 86);}");
 
         }
         else if(curColor == "highlight")
         {
             blockNum->setStyleSheet("QTextBrowser{"
                                 "font: 12pt American Typewriter;"
-                                "background-color: rgb(151, 255, 255);}");
+                                "background-color: rgb(160, 232, 175);}");
 
         }
         else if(curColor == "map")
@@ -194,21 +194,21 @@ void Block::SetFontType(int sz)
         {
             blockNum->setStyleSheet("QTextBrowser{"
                                 "font: 18pt American Typewriter;"
-                                "background-color: rgb(240, 248, 255);}");
+                                "background-color: rgb(237, 234, 208);}");
 
         }
         else if(curColor == "mark")
         {
             blockNum->setStyleSheet("QTextBrowser{"
                                 "font: 18pt American Typewriter;"
-                                "background-color: rgb(135, 206, 235);}");
+                                "background-color: rgb(255, 207, 86);}");
 
         }
         else if(curColor == "highlight")
         {
             blockNum->setStyleSheet("QTextBrowser{"
                                 "font: 18pt American Typewriter;"
-                                "background-color: rgb(151, 255, 255);}");
+                                "background-color: rgb(160, 232, 175);}");
 
         }
         else if(curColor == "map")
@@ -225,21 +225,21 @@ void Block::SetFontType(int sz)
         {
             blockNum->setStyleSheet("QTextBrowser{"
                                 "font: 30pt American Typewriter;"
-                                "background-color: rgb(240, 248, 255);}");
+                                "background-color: rgb(237, 234, 208);}");
 
         }
         else if(curColor == "mark")
         {
             blockNum->setStyleSheet("QTextBrowser{"
                                 "font: 30pt American Typewriter;"
-                                "background-color: rgb(135, 206, 235);}");
+                                "background-color: rgb(255, 207, 86);}");
 
         }
         else if(curColor == "highlight")
         {
             blockNum->setStyleSheet("QTextBrowser{"
                                 "font: 30pt American Typewriter;"
-                                "background-color: rgb(151, 255, 255);}");
+                                "background-color: rgb(160, 232, 175);}");
 
         }
         else if(curColor == "map")

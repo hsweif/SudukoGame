@@ -29,6 +29,16 @@ void SudukoMap::Clear()
     }
 }
 
+bool SudukoMap::BlankMap()
+{
+    for(int i = 0; i < 81; i++)
+    {
+        if(data[i] != -1 || !original[i])
+            return false;
+    }
+    return true;
+}
+
 bool SudukoMap::Original(int x, int y)
 {
     return original[x*9 + y];

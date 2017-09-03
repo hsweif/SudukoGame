@@ -30,7 +30,8 @@ SOURCES += main.cpp\
     step.cpp \
     sudukomap.cpp \
     solver.cpp \
-    infobox.cpp
+    infobox.cpp \
+    loginui.cpp
 
 HEADERS  += mainwindow.h \
     block.h \
@@ -38,10 +39,12 @@ HEADERS  += mainwindow.h \
     step.h \
     sudukomap.h \
     solver.h \
-    infobox.h
+    infobox.h \
+    loginui.h
 
 FORMS    += mainwindow.ui \
-    infobox.ui
+    infobox.ui \
+    loginui.ui
 
 RESOURCES += \
     icons.qrc
